@@ -1,0 +1,68 @@
+.navbar {
+    color: var(--color-text-p);
+    background-color: var(--color-bg-p);
+    padding: var(--space-medium);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: var(--shadow-medium);
+}
+
+.navbar-brand h1 {
+    margin: 0;
+    font-size: var(--text-size-title);
+}
+
+.navbar-links {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: var(--space-medium);
+}
+
+.navbar-links li {
+    margin: 0;
+}
+
+.navbar-links a {
+    color: var(--color-text-p);
+    padding: var(--space-small) var(--space-medium);
+    font-size: var(--text-size-menu-items);
+    text-decoration: none;
+    border-radius: 7px;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-links a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.navbar-links a.active {
+    background-color: var(--color-accent-p);
+    color: var(--color-text-p);
+    font-size: var(--text-size-menu-items);
+}
+
+.card {
+    background-color: var(--color-bg-card);
+    border-radius: var(--radius-medium);
+    padding: var(--space-medium);
+    box-shadow: var(--shadow-medium);
+    border: 1px solid #e2e8f0;
+}
+
+.card h3 {
+    margin-top: 0;
+    color: var(--color-text);
+}
+
+.container {
+    background-color: var(--color-bg-p);
+    color: var(--color-text-p);
+}
+
+.grid {
+    background-color: var(--color-bg-p);
+    color: var(--color-text-s);
+}
