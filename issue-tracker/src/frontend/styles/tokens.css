@@ -25,17 +25,29 @@
     --color-info: #06B6D4;
     
 
-    --text-size-menu-items: 20px;
+    --text-size-menu-items-smaller: 12px;
+    --text-size-menu-items-small: 17px;
+    --text-size-menu-items-medium: 20px;
+    --text-size-menu-items-large: 30px;
     --text-size-title: 35px;
 
     --space-extra-small: 4px;
     --space-small: 8px;
-    --space-medium: 16px;
-    --space-large: 24px;
+    --space-medium: 20px;
+    --space-large: 40px;
     
+    --gap-small: 8px;
+    --gap-medium: 20px;
+    --gap-large: 40px;
+
+    --radius-small: 4px;
     --radius-medium: 8px;
+    --radius-large: 12px;
     
     --shadow-medium: 0 4px 12px rgba(0,0,0,0.1);
     
     --font-base: clamp(14px, 1.2vw, 18px);
+
+    --border-thickness-thin: 1px;
+    --border-thickness-thick: 3px;
 }

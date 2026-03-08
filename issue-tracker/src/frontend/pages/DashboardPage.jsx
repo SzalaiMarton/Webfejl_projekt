@@ -1,4 +1,6 @@
-import React from "react";
+import "../styles/tokens.css"
+import "../styles/global.css"
+import "../styles/layout.css"
 
 function DashboardPage() {
   return (
