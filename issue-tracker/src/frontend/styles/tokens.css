@@ -3,7 +3,7 @@
     --color-primary: #2563eb;
     --color-secondary: #10b981;
 
-    --color-accent-p: #3B82F6;
+    --color-accent-p: #5997fa;
     --color-accent-p-hover: #60A5FA;
     --color-accent-p-active: #2563EB;
     
@@ -24,6 +24,8 @@
     --color-error: #EF4444;
     --color-info: #06B6D4;
     
+    --color-button: #2657a7;
+    --color-button-text: white;
 
     --text-size-menu-items-smaller: 12px;
     --text-size-menu-items-small: 17px;
@@ -50,4 +52,16 @@
 
     --border-thickness-thin: 1px;
     --border-thickness-thick: 3px;
+
+    --textarea-width: 300px;
+    --textarea-height: 100px;
+
+    --input-width: 300px;
+    --input-height: 25px;
+
+    --button-width: 100px;
+    --button-height: 28px;
+
+    --select-width: 303px;
+    --select-height: 25px;
 }

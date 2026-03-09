@@ -1,3 +1,16 @@
+body {
+    background-color: var(--color-bg-p);
+}
+
+button:hover {
+    background-color: rgb(255, 255, 255, 0.2);
+}
+
+button {
+    background-color: var(--color-button);
+    color: var(--color-button-text);
+}
+
 .navbar {
     color: var(--color-text-p);
     background-color: var(--color-bg-s);
@@ -36,10 +49,10 @@
 }
 
 .grid {
-    background-color: var(--color-bg-p);
     color: var(--color-text-s);
 }
 
-body {
-    background-color: var(--color-bg-p);
+.create-issue-form-create-button {
+    background-color: rgba(38, 140, 13);
+    color: rgb(255, 255, 255);
 }
