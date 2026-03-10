@@ -52,7 +52,7 @@
 
     --radius-small: 4px;
     --radius-medium: 8px;
-    --radius-large: 12px;
+    --radius-large: 20px;
     
     --shadow-medium: 0 4px 12px rgba(0,0,0,0.1);
     
@@ -76,4 +76,7 @@
 
     --select-width: 100%;
     --select-height: 25px;
+
+    --error-card-width: 500px;
+    --error-card-height: 200px;
 }

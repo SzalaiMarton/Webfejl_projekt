@@ -3,31 +3,23 @@ import { useState } from "react";
 import "../styles/global.css"
 import "../styles/tokens.css"
 
-function PasswordField({ maxLength, required, placeholder }) {
+function PasswordField({ maxLength, required, placeholder,  isValid }) {
   const [input, setInput] = useState("");
   const [errors, setErrors] = useState([]);
-  const [isFocused, setIsFocused] = useState(false); // Track focus
+  const [isFocused, setIsFocused] = useState(false);
 
   const validateInput = (value) => {
     const newErrors = [];
 
-    if (value.length < 8) {
-      newErrors.push("At least 8 characters");
-    }
-    if (!/[A-Z]/.test(value)) {
-      newErrors.push("At least one uppercase letter");
-    }
-    if (!/[a-z]/.test(value)) {
-      newErrors.push("At least one lowercase letter");
-    }
-    if (!/[0-9]/.test(value)) {
-      newErrors.push("At least one number");
-    }
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
-      newErrors.push("At least one special character");
-    }
+    if (value.length < 8) newErrors.push("At least 8 characters");
+    if (!/[A-Z]/.test(value)) newErrors.push("At least one uppercase letter");
+    if (!/[a-z]/.test(value)) newErrors.push("At least one lowercase letter");
+    if (!/[0-9]/.test(value)) newErrors.push("At least one number");
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) newErrors.push("At least one special character");
 
     setErrors(newErrors);
+
+    isValid(newErrors.length === 0 && value.length > 0);
   };
 
   const handleChange = (e) => {

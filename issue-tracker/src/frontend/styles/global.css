@@ -138,3 +138,23 @@ requiredtext {
 .login-form-password label {
     font-size: larger;
 }
+
+.error-card-container {
+    background-color: var(--color-error);
+    color: var(--color-text-p);
+    font-weight:bold;
+    border-radius: var(--radius-large);
+    transition: opacity 0.2s ease-in-out;
+    transform: translateY(-50px);
+    opacity: 0;
+}
+
+.error-card-container.ReactModal__Content--after-open {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.error-card-container.ReactModal__Content--before-close {
+  transform: translateY(-50px);
+  opacity: 0;
+}
