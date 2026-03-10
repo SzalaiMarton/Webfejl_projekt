@@ -27,11 +27,19 @@
     --color-button: #2657a7;
     --color-button-text: white;
 
+    --color-required-text: rgba(246, 61, 61, 0.8);
+
     --text-size-menu-items-smaller: 12px;
     --text-size-menu-items-small: 17px;
     --text-size-menu-items-medium: 20px;
     --text-size-menu-items-large: 30px;
     --text-size-title: 35px;
+
+    --text-family-p: 'Arial';
+    --text-family-input-field: 'Arial';
+
+    --text-font-size-primary: medium;
+    --text-font-size-secondary: small;
 
     --space-extra-small: 4px;
     --space-small: 8px;
@@ -53,15 +61,19 @@
     --border-thickness-thin: 1px;
     --border-thickness-thick: 3px;
 
-    --textarea-width: 300px;
+    --textarea-width: 100%;
+    --textarea-max-width: 100%;
+    --textarea-min-width: 300px;
     --textarea-height: 100px;
+    --textarea-max-height: 330px;
+    --textarea-min-height: 100px;
 
-    --input-width: 300px;
+    --input-width: 100%;
     --input-height: 25px;
 
     --button-width: 100px;
     --button-height: 28px;
 
-    --select-width: 303px;
+    --select-width: 100%;
     --select-height: 25px;
 }

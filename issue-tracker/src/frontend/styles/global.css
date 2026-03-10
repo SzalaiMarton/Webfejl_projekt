@@ -9,6 +9,64 @@ button:hover {
 button {
     background-color: var(--color-button);
     color: var(--color-button-text);
+    font-family: var(--text-family-p);
+}
+
+textarea {
+    font-style: italic;
+    font-family: var(--text-family-input-field);
+}
+
+input {
+    font-style: italic;
+    font-family: var(--text-family-input-field);
+}
+
+input:focus {
+    font-style: normal;
+}
+
+textarea:focus {
+    font-style: normal;
+}
+
+h1 {
+    font-family: var(--text-family-p);
+}
+
+h2 {
+    font-family: var(--text-family-p);
+}
+
+h3 {
+    font-family: var(--text-family-p);
+}
+
+p {
+    font-family: var(--text-family-p);
+}
+
+label {
+    font-family: var(--text-family-p);
+}
+
+li {
+    font-family: var(--text-family-p);
+}
+
+requiredtext {
+    color: var(--color-required-text);
+    font-size: small;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-style: italic;
+}
+
+.password-field ul {
+    color: var(--color-error);
+}
+
+.password-field p {
+    color: var(--color-success);
 }
 
 .navbar {
@@ -55,4 +113,28 @@ button {
 .create-issue-form-create-button {
     background-color: rgba(38, 140, 13);
     color: rgb(255, 255, 255);
+}
+
+.create-issue-form-desc p {
+    font-size: small;
+}
+
+.create-issue-form-desc label {
+    font-size: larger;
+}
+
+.create-issue-form-title label {
+    font-size: larger;
+}
+
+.create-issue-form-project-picker label {
+    font-size: larger;
+}
+
+.login-form-username label {
+    font-size: larger;
+}
+
+.login-form-password label {
+    font-size: larger;
 }
