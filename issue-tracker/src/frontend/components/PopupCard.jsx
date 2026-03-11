@@ -1,6 +1,6 @@
 import Modal from "react-modal";
 
-const ErrorCard = ({ message, isOpen, onClose }) => {
+const PopupCard = ({ message, isOpen, onClose, innerClassName, outerClassName }) => {
   if (!isOpen) return null;
 
   return (
@@ -11,15 +11,15 @@ const ErrorCard = ({ message, isOpen, onClose }) => {
     shouldCloseOnEsc={true}
     preventScroll={true}
     isOpen={isOpen}
-    className="error-card-container"
+    className={outerClassName}
     >
-      <div className="error-card-message">
+      <popupmessage className={innerClassName}>
         <h2>Error</h2>
         <p>{message}</p>
         <button onClick={onClose}>Close</button>
-      </div>
+      </popupmessage>
     </Modal>
   );
 };
 
-export default ErrorCard;
+export default PopupCard;

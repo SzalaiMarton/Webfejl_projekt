@@ -63,7 +63,7 @@ titlebar {
     justify-items: center;
     align-self: center;
     margin-bottom: var(--space-medium);
-}
+}s
 
 .container {
     padding: var(--space-small);
@@ -88,7 +88,7 @@ titlebar {
 }
 
 .navbar-links a.active {
-    font-size: var(--text-size-menu-items-medium);
+    font-size: var(--text-size-menu-items-small);
 }
 
 .navbar-links {
@@ -227,6 +227,10 @@ titlebar {
     .navbar-links a {
         padding: var(--space-small) var(--space-medium);
         border-radius: var(--radius-medium);
+        font-size: var(--text-size-menu-items-medium);
+    }
+
+    .navbar-links a.active {
         font-size: var(--text-size-menu-items-medium);
     }
 }

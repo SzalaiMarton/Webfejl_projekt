@@ -2,13 +2,14 @@ import RequiredFieldText from "../components/RequiredFieldText";
 import PasswordField from "../components/PasswordField";
 import LoginButton from "../components/LoginButton";
 import RequiredField from "../components/RequiredField";
-import ErrorCard from "../components/ErrorCard";
+import PopupCard from "../components/PopupCard";
 import { useState } from "react";
 
 function LoginPage() {
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [isUsernameValid, setIsUsernameValid] = useState(false);
   const [isErrorOpen, setIsErrorOpen] = useState(false);
+  const [isSucLoginOpen, setIsSucLoginOpen] = useState(false);
 
   const handleClick = () => {
     if (!isPasswordValid && !isUsernameValid) {
@@ -16,16 +17,26 @@ function LoginPage() {
       return;
     }
     else {
-      alert("login successful!");
+      setIsSucLoginOpen(true);
+      return;
     }
   };
 
   return (
     <div className="container">
-       <ErrorCard 
+       <PopupCard 
         isOpen={isErrorOpen}
         message="Login failed"
         onClose={() => setIsErrorOpen(false)}
+        innerClassName="error-card-message"
+        outerClassName="error-card-container"
+      />
+      <PopupCard 
+        isOpen={isSucLoginOpen}
+        message="Login successful!"
+        onClose={() => setIsErrorOpen(false)}
+        innerClassName="suc-login-card-message"
+        outerClassName="suc-login-card-container"
       />
       <div className="login-form">
         <div>
