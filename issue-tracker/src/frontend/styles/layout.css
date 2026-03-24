@@ -58,16 +58,22 @@ titlebar {
     height: var(--error-card-height);
 }
 
+.pagenotfound-container {
+    padding: var(--space-medium);
+}
+
 .error-card-message {
     display: grid;
     justify-items: center;
     align-self: center;
     margin-bottom: var(--space-medium);
-}s
+}
+
+
 
 .container {
+    border-radius: var(--radius-large);
     padding: var(--space-small);
-    border-radius: var(--radius-medium);
     padding-bottom: var(--space-medium);
 }
 
