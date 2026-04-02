@@ -1,23 +1,23 @@
 import Modal from "react-modal";
 
-const PopupCard = ({ message, isOpen, onClose, innerClassName, outerClassName }) => {
-  if (!isOpen) return null;
-
+const PopupCard = ({ message, isOpen, onClose, innerClassName, outerClassName, title }) => {
   return (
     <Modal
-    style={{
-      overlay: {background: 'transparent'},
-    }}
-    shouldCloseOnEsc={true}
-    preventScroll={true}
-    isOpen={isOpen}
-    className={outerClassName}
+      style={{
+        overlay: { background: 'rgba(0, 0, 0, 0.5)' },
+      }}
+      shouldCloseOnEsc={true}
+      preventScroll={true}
+      isOpen={isOpen}
+      className={outerClassName}
+      ariaHideApp={false}
+      onRequestClose={onClose}
     >
-      <popupmessage className={innerClassName}>
-        <h2>Error</h2>
+      <div className={innerClassName}>
+        <h2>{title}</h2>
         <p>{message}</p>
         <button onClick={onClose}>Close</button>
-      </popupmessage>
+      </div>
     </Modal>
   );
 };

@@ -1,6 +1,6 @@
 import React from "react";
 
-function LoginButton({ type, disabled, onClick, className }) {
+function CustomButton({ type, disabled, onClick, className, text }) {
   return (
     <button
       className={className}
@@ -8,9 +8,9 @@ function LoginButton({ type, disabled, onClick, className }) {
       disabled={disabled}
       type={type}
     >
-      Login
+      {text}
     </button>
   );
 }
 
-export default LoginButton;
+export default CustomButton;

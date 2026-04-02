@@ -54,18 +54,19 @@ li {
     font-family: var(--text-family-p);
 }
 
-requiredtext {
+.requiredtext {
     color: var(--color-required-text);
     font-size: small;
     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
     font-style: italic;
 }
 
-.password-field ul {
+.input-field ul {
     color: var(--color-error);
+    font-size: medium;
 }
 
-.password-field p {
+.input-field p {
     color: var(--color-success);
 }
 
@@ -131,16 +132,12 @@ requiredtext {
     font-size: larger;
 }
 
-.login-form-username label {
-    font-size: larger;
-}
-
-.login-form-password label {
+.form-container-field label {
     font-size: larger;
 }
 
 .error-card-container {
-    background-color: var(--color-error);
+    background-color: rgba(154, 154, 154, 0.287);
     color: var(--color-text-p);
     font-weight:bold;
     border-radius: var(--radius-large);
@@ -159,3 +156,34 @@ requiredtext {
   opacity: 0;
 }
 
+.error-card-message {
+    background-color: var(--color-error);
+    border-radius: var(--radius-medium);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.suc-login-card-container {
+    background-color: rgba(154, 154, 154, 0.287);
+    color: var(--color-text-p);
+    font-weight:bold;
+    border-radius: var(--radius-large);
+    transition: opacity 0.2s ease-in-out;
+    transform: translateY(-50px);
+    opacity: 0;
+}
+
+.suc-login-card-container.ReactModal__Content--after-open {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.suc-login-card-container.ReactModal__Content--before-close {
+  transform: translateY(-50px);
+  opacity: 0;
+}
+
+.suc-login-card-message {
+    border-radius: var(--radius-medium);
+    background-color: var(--color-success);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

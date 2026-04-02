@@ -1,13 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-function RequiredField({maxChar, required, placeholder, isValid, type}) {
-    const [input, setInput] = useState("")
+function RequiredField({maxChar, required, placeholder, isValid, onValidate, type, value, onChange, disabled}) {
+    const [input, setInput] = useState(value || "");
 
-    isValid = input.length > 0;
+    useEffect(() => {
+        if (value !== undefined) {
+            setInput(value);
+        }
+    }, [value]);
 
     const handleChange = (e) => {
-        const value = e.target.value;
-        setInput(value);
+        const val = e.target.value;
+        setInput(val);
+        
+        // Validáció
+        const isInputValid = val.length > 0;
+        if (onValidate) {
+            onValidate(isInputValid);
+        }
+        if (isValid) {
+            isValid(isInputValid);
+        }
+
+        // Parent onChange callback
+        if (onChange) {
+            onChange(e);
+        }
     }
 
     return (
@@ -16,8 +34,9 @@ function RequiredField({maxChar, required, placeholder, isValid, type}) {
             required={required} 
             value={input}
             onInput={handleChange}
-            type={type}
+            type={type || "text"}
             placeholder={placeholder}
+            disabled={disabled}
         />
     );
 }

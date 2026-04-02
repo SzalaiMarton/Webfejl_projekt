@@ -1,7 +1,9 @@
-### Description:
+### Description
+
 - This project was developed as part of a university course and is structured around three key milestones: _frontend_, _backend_, and _database_.
 
-### Screenshots:
+### Screenshots
+
 <p align="center">
   <img src="screenshots/404pagenotfound.png" alt="Screenshot" width="300">
   <img src="screenshots/create-issue.png" alt="Screenshot" width="300">

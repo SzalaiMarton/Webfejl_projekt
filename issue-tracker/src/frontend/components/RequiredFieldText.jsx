@@ -1,6 +1,6 @@
 function RequiredFieldText() {
     return (
-        <requiredtext>Required</requiredtext>
+        <p className="requiredtext">Required</p>
     );
 }
 

@@ -39,7 +39,7 @@ select {
     border-width: 0;
 }
 
-titlebar {
+.titlebar {
     display: flex;
     justify-content: space-between;
 }
@@ -47,13 +47,30 @@ titlebar {
 .error-card-container {
     position: fixed;
     display: flex;
-    justify-content: center;
     justify-self: center;
     align-self: center;
+    justify-content: center;
+    align-items: center;
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
+    bottom: 100px;
+    padding: var(--space-small);
+    width: var(--error-card-width);
+    height: var(--error-card-height);
+}
+
+.suc-login-card-container {
+    position: fixed;
+    display: flex;
+    justify-self: center;
+    align-self: center;
+    justify-content: center;
+    align-items: center;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 100px;
     width: var(--error-card-width);
     height: var(--error-card-height);
 }
@@ -63,28 +80,47 @@ titlebar {
 }
 
 .error-card-message {
-    display: grid;
-    justify-items: center;
-    align-self: center;
-    margin-bottom: var(--space-medium);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-medium);
+    max-width: 500px;
+    width: 90%;
+    margin: 0;
 }
 
-
+.suc-login-card-message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-medium);
+    max-width: 500px;
+    width: 90%;
+    margin: 0;
+}
 
 .container {
     border-radius: var(--radius-large);
-    padding: var(--space-small);
-    padding-bottom: var(--space-medium);
+    padding: var(--space-large);
+    padding-bottom: var(--space-large);
 }
 
 .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
     padding: var(--space-medium);
     margin-bottom: var(--gap-medium);
     border-radius: var(--radius-medium);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: column;
+}
+
+.navbar-links button {
+    padding: var(--space-small) var(--space-medium);
 }
 
 .navbar-links a {
@@ -95,6 +131,12 @@ titlebar {
 
 .navbar-links a.active {
     font-size: var(--text-size-menu-items-small);
+}
+
+.navbar-user {
+    display: flex;
+    flex-direction: column;
+    padding-left: 30px;
 }
 
 .navbar-links {
@@ -148,6 +190,10 @@ titlebar {
     width: 100%;
 }
 
+.create-issue-form-priority {
+    margin-bottom: var(--space-medium);
+}
+
 .create-issue-form-title {
     display: flex;
     flex-direction: column;
@@ -157,7 +203,6 @@ titlebar {
 .create-issue-form-desc {
     display: flex;
     flex-direction: column;
-    margin-bottom: var(--space-medium);
 }
 
 .create-issue-form-create-button {
@@ -165,45 +210,38 @@ titlebar {
     width: 100%;
 }
 
-.login-form {
+.form-container {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-self: center;
     width: 100%;
 }
 
-.login-form h2 {
+.form-container h2 {
     margin-bottom: 0;
 }
 
-.login-form button {
+.form-container button {
     width: 100%;
 }
 
-.login-form p {
+.form-container p {
     margin-top: 0;
 }
 
-.login-form-username {
+.form-container-field {
     display: flex;
     flex-direction: column;
-    margin-bottom: var(--space-medium);
     width: 100%;
 }
 
-.login-form-password {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: var(--space-medium);
-    width: 100%;
-}
-
-.password-field ul {
+.form-container ul {
     padding-left: var(--space-medium);
     margin-top: var(--space-small);
 }
 
-.password-field p {
+.form-container p {
     margin-top: var(--space-small);
 }
 

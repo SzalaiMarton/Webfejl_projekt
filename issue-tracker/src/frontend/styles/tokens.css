@@ -21,13 +21,13 @@
 
     --color-success: #22C55E;
     --color-warning: #F59E0B;
-    --color-error: #EF4444;
+    --color-error: #b73636;
     --color-info: #06B6D4;
     
     --color-button: #2657a7;
     --color-button-text: white;
 
-    --color-required-text: rgba(246, 61, 61, 0.8);
+    --color-required-text: rgba(241, 68, 68, 0.8);
 
     --text-size-menu-items-smaller: 12px;
     --text-size-menu-items-small: 17px;
