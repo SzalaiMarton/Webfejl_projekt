@@ -1,7 +1,3 @@
-/**
- * Label Model
- * Label entitás - issue-k kategorizálásához
- */
 export class Label {
   constructor(id, projectId, name, color, description = '') {
     this.id = id;

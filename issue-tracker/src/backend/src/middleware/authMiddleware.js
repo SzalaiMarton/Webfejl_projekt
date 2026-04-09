@@ -1,10 +1,5 @@
-/**
- * Auth Middleware
- * Felhasználó hitelesítésének ellenőrzése
- */
 export function requireAuth(req, res, next) {
   try {
-    // Authorization header ellenőrzése
     const authHeader = req.headers.authorization;
     
     if (!authHeader) {
@@ -14,7 +9,6 @@ export function requireAuth(req, res, next) {
       });
     }
 
-    // Bearer token formátum ellenőrzése
     const [scheme, token] = authHeader.split(' ');
     if (scheme !== 'Bearer' || !token) {
       return res.status(401).json({
@@ -23,9 +17,7 @@ export function requireAuth(req, res, next) {
       });
     }
 
-    // Egyszerű token validáció - valós alkalmazásban: JWT
-    // Ez most csak egy placeholder, JWT-t lehetne használni
-    req.userId = token; // A token az user ID
+    req.userId = token;
 
     next();
   } catch (error) {
@@ -36,10 +28,6 @@ export function requireAuth(req, res, next) {
   }
 }
 
-/**
- * Optional Auth Middleware
- * Nem kötelező hitelesítés
- */
 export function optionalAuth(req, res, next) {
   try {
     const authHeader = req.headers.authorization;
@@ -54,5 +42,18 @@ export function optionalAuth(req, res, next) {
     next();
   } catch (error) {
     next();
+  }
+}
+
+export function requireSessionAuth(req, res, next) {
+  try {
+    if (req.session && req.session.userId) {
+      req.userId = req.session.userId;
+      return next();
+    }
+
+    return res.status(401).json({ error: 'Not authenticated', status: 401 });
+  } catch (error) {
+    return res.status(401).json({ error: 'Authentication failed', status: 401 });
   }
 }

@@ -48,9 +48,10 @@ function LoginPage() {
       await AuthService.login(email, password);
       setIsSucLoginOpen(true);
       
-      setTimeout(() => {
+      navigate("/dashboard");
+      /*setTimeout(() => {
         navigate("/dashboard");
-      }, 2000);
+      }, 2000);*/
     } catch (error) {
       setErrorMessage("Login failed. Please try again.");
       setIsErrorOpen(true);
@@ -67,16 +68,16 @@ function LoginPage() {
         onClose={() => setIsErrorOpen(false)}
         innerClassName="error-card-message"
         outerClassName="error-card-container"
-        title={"Error"}
+        title={"Error!"}
       />
-      <PopupCard 
+      {/*<PopupCard 
         isOpen={isSucLoginOpen}
         message="Login successful!"
         onClose={() => setIsSucLoginOpen(false)}
         innerClassName="suc-login-card-message"
         outerClassName="suc-login-card-container"
-        title={"Error"}
-      />
+        title={"Success!"}
+      />*/}
       <div className="form-container">
         <div>
           <h2>Login</h2>

@@ -6,10 +6,6 @@ import ProjectService from '../services/ProjectService.js';
 
 const router = express.Router();
 
-/**
- * GET /api/labels
- * Összes label listázása
- */
 router.get('/', optionalAuth, asyncHandler(async (req, res) => {
   try {
     const labels = LabelService.getAllLabels();
@@ -19,10 +15,6 @@ router.get('/', optionalAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * GET /api/labels/project/:projectId
- * Projekt label-jeinek lekérése
- */
 router.get('/project/:projectId', optionalAuth, asyncHandler(async (req, res) => {
   try {
     const labels = LabelService.getProjectLabels(req.params.projectId);
@@ -32,10 +24,6 @@ router.get('/project/:projectId', optionalAuth, asyncHandler(async (req, res) =>
   }
 }));
 
-/**
- * POST /api/labels
- * Új label létrehozása
- */
 router.post('/', requireAuth, asyncHandler(async (req, res) => {
   const { projectId, name, color, description } = req.body;
 
@@ -46,7 +34,6 @@ router.post('/', requireAuth, asyncHandler(async (req, res) => {
   }
 
   try {
-    // Ellenőrzés: a felhasználó a projekt tulajdonosa
     const project = ProjectService.getProjectById(projectId);
     if (project.ownerId !== req.userId) {
       return res.status(403).json({ error: 'Unauthorized' });
@@ -62,16 +49,11 @@ router.post('/', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * PATCH /api/labels/:id
- * Label szerkesztése
- */
 router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
   try {
     const label = LabelService.getLabelById(req.params.id);
     const project = ProjectService.getProjectById(label.projectId);
 
-    // Csak a projekt tulajdonosa szerkesztheti
     if (project.ownerId !== req.userId) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
@@ -86,16 +68,11 @@ router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * DELETE /api/labels/:id
- * Label törlése
- */
 router.delete('/:id', requireAuth, asyncHandler(async (req, res) => {
   try {
     const label = LabelService.getLabelById(req.params.id);
     const project = ProjectService.getProjectById(label.projectId);
 
-    // Csak a projekt tulajdonosa törölheti
     if (project.ownerId !== req.userId) {
       return res.status(403).json({ error: 'Unauthorized' });
     }

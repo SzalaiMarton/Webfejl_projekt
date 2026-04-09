@@ -2,15 +2,11 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { User } from '../models/User.js';
+import { v4 as uuidv4 } from 'uuid';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dirname, '../../data');
 
-/**
- * DatabaseService
- * Feladata: JSON fájlok kezelése az adatokhoz
- * Ez biztosítja a perzisztenciát az alkalmazásban
- */
 class DatabaseService {
   constructor() {
     this.data = {
@@ -24,22 +20,16 @@ class DatabaseService {
     this.isInitialized = false;
   }
 
-  /**
-   * Adatbázis inicializálása - betöltés fájlokból vagy üres alapértékek
-   */
   async initialize() {
     try {
-      // Fájlok létrehozása, ha nem léteznek
       await this.ensureDataFilesExist();
       
-      // Adatok betöltése
       for (const [key, _] of Object.entries(this.data)) {
         try {
           const filePath = path.join(DATA_DIR, `${key}.json`);
           const fileContent = await fs.readFile(filePath, 'utf8');
           const loadedData = JSON.parse(fileContent || '[]');
           
-          // Convert users to User instances to preserve password property
           if (key === 'users') {
             this.data[key] = loadedData.map(userData => User.fromJSON(userData));
           } else {
@@ -50,6 +40,13 @@ class DatabaseService {
         }
       }
 
+      if (this.data.users.length === 0) {
+        const testUser = new User(uuidv4(), 'testuser', 'test@example.com', 'password', 'user');
+        this.data.users.push(testUser);
+        await this.saveToFile('users');
+        console.log('✓ Seeded test user: test@example.com / password');
+      }
+
       this.isInitialized = true;
       console.log('✓ Database initialized successfully');
     } catch (error) {
@@ -58,15 +55,10 @@ class DatabaseService {
     }
   }
 
-  /**
-   * Biztosítja, hogy az adatkönyvtár és fájlok léteznek
-   */
   async ensureDataFilesExist() {
     try {
-      // Könyvtár létrehozása, ha nem létezik
       await fs.mkdir(DATA_DIR, { recursive: true });
 
-      // Adatfájlok üres tömbbel inicializálása, ha nem léteznek
       for (const key of Object.keys(this.data)) {
         const filePath = path.join(DATA_DIR, `${key}.json`);
         try {
@@ -81,18 +73,13 @@ class DatabaseService {
     }
   }
 
-  /**
-   * Adatok mentése fájlba (JSON)
-   */
   async saveToFile(dataType) {
     try {
       const filePath = path.join(DATA_DIR, `${dataType}.json`);
       
-      // Special handling for users to preserve passwords
       let dataToSave = this.data[dataType];
       if (dataType === 'users') {
         dataToSave = dataToSave.map(user => {
-          // Convert User instance to plain object with all properties including password
           if (user.password) {
             return {
               id: user.id,
@@ -116,9 +103,6 @@ class DatabaseService {
     }
   }
 
-  /**
-   * Egész adatbázis mentése
-   */
   async saveAll() {
     try {
       for (const key of Object.keys(this.data)) {
@@ -129,8 +113,6 @@ class DatabaseService {
       throw error;
     }
   }
-
-  // ===== USERS =====
 
   getAllUsers() {
     return this.data.users;
@@ -173,8 +155,6 @@ class DatabaseService {
     return deletedUser;
   }
 
-  // ===== PROJECTS =====
-
   getAllProjects() {
     return this.data.projects;
   }
@@ -210,7 +190,6 @@ class DatabaseService {
     const deletedProject = this.data.projects.splice(projectIndex, 1)[0];
     await this.saveToFile('projects');
     
-    // Törlés az issue-ből is (cascade delete)
     const issuesToDelete = this.data.issues.filter(i => i.projectId === id);
     for (const issue of issuesToDelete) {
       await this.deleteIssue(issue.id);
@@ -218,8 +197,6 @@ class DatabaseService {
     
     return deletedProject;
   }
-
-  // ===== ISSUES =====
 
   getAllIssues() {
     return this.data.issues;
@@ -256,7 +233,6 @@ class DatabaseService {
     const deletedIssue = this.data.issues.splice(issueIndex, 1)[0];
     await this.saveToFile('issues');
     
-    // Törlés a comment-ekből is (cascade delete)
     const commentsToDelete = this.data.comments.filter(c => c.issueId === id);
     for (const comment of commentsToDelete) {
       await this.deleteComment(comment.id);
@@ -264,8 +240,6 @@ class DatabaseService {
     
     return deletedIssue;
   }
-
-  // ===== COMMENTS =====
 
   getAllComments() {
     return this.data.comments;
@@ -304,8 +278,6 @@ class DatabaseService {
     return deletedComment;
   }
 
-  // ===== LABELS =====
-
   getAllLabels() {
     return this.data.labels;
   }
@@ -343,8 +315,6 @@ class DatabaseService {
     return deletedLabel;
   }
 
-  // ===== ATTACHMENTS =====
-
   getAllAttachments() {
     return this.data.attachments;
   }
@@ -377,7 +347,6 @@ class DatabaseService {
   }
 }
 
-// Singleton instance
 const db = new DatabaseService();
 
 export default db;

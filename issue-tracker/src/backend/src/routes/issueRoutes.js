@@ -5,11 +5,6 @@ import { requireAuth, optionalAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-/**
- * GET /api/issues
- * Összes issue listázása
- * Query paraméterek: projectId, priority, status, search, sortBy, sortOrder
- */
 router.get('/', optionalAuth, asyncHandler(async (req, res) => {
   try {
     const filters = {
@@ -22,7 +17,6 @@ router.get('/', optionalAuth, asyncHandler(async (req, res) => {
       sortOrder: req.query.sortOrder || 'desc'
     };
 
-    // Üres szűrők eltávolítása
     Object.keys(filters).forEach(key => filters[key] === undefined && delete filters[key]);
 
     const issues = IssueService.getAllIssues(filters);
@@ -32,10 +26,6 @@ router.get('/', optionalAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * GET /api/issues/:id
- * Issue lekérése ID alapján (részletes nézet)
- */
 router.get('/:id', optionalAuth, asyncHandler(async (req, res) => {
   try {
     const issue = IssueService.getIssueById(req.params.id);
@@ -45,11 +35,6 @@ router.get('/:id', optionalAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * POST /api/issues
- * Új issue létrehozása
- * Test: curl -X POST http://localhost:3000/api/issues -H "Content-Type: application/json" -d '{"projectId":"...","title":"...","createdById":"..."}'
- */
 router.post('/', requireAuth, asyncHandler(async (req, res) => {
   const { projectId, title, description, priority, labels } = req.body;
 
@@ -78,15 +63,10 @@ router.post('/', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * PATCH /api/issues/:id
- * Issue szerkesztése
- */
 router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
   try {
     const issue = IssueService.getIssueById(req.params.id);
 
-    // Csak az issue létrehozója vagy admin szerkesztheti
     if (issue.createdById !== req.userId) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
@@ -101,15 +81,10 @@ router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * DELETE /api/issues/:id
- * Issue törlése
- */
 router.delete('/:id', requireAuth, asyncHandler(async (req, res) => {
   try {
     const issue = IssueService.getIssueById(req.params.id);
 
-    // Csak az issue létrehozója vagy admin törölheti
     if (issue.createdById !== req.userId) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
@@ -124,10 +99,6 @@ router.delete('/:id', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * PATCH /api/issues/:id/assign
- * Issue hozzárendelése felhasználóhoz
- */
 router.patch('/:id/assign', requireAuth, asyncHandler(async (req, res) => {
   const { userId } = req.body;
 
@@ -138,7 +109,6 @@ router.patch('/:id/assign', requireAuth, asyncHandler(async (req, res) => {
   try {
     const issue = IssueService.getIssueById(req.params.id);
 
-    // Csak az issue létrehozója rendelhet hozzá
     if (issue.createdById !== req.userId) {
       return res.status(403).json({ error: 'Unauthorized' });
     }

@@ -1,7 +1,3 @@
-/**
- * Comment Model
- * Comment entitás - issue-hez kapcsolódó hozzászólások
- */
 export class Comment {
   constructor(id, issueId, authorId, content) {
     this.id = id;

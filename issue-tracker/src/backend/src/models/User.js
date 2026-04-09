@@ -1,21 +1,16 @@
-/**
- * User Model
- * Felhasználó entitás - regisztrálhatnak, bejelentkezhetnek, projekteket hozhatnak létre
- */
 export class User {
   constructor(id, username, email, password, role = 'user', avatar = null) {
     this.id = id;
     this.username = username;
     this.email = email;
-    this.password = password; // In real app, this should be hashed
-    this.role = role; // 'admin' | 'user'
+    this.password = password;
+    this.role = role;
     this.avatar = avatar;
     this.createdAt = new Date().toISOString();
     this.updatedAt = new Date().toISOString();
   }
 
   toJSON() {
-    // Don't expose password in JSON
     const { password, ...userWithoutPassword } = this;
     return userWithoutPassword;
   }

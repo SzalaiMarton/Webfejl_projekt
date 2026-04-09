@@ -1,7 +1,3 @@
-/**
- * Issue Model
- * Issue entitás - projekten belüli problémák és feladatok
- */
 export class Issue {
   constructor(
     id,

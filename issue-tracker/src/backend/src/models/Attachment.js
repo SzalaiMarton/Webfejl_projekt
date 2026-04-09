@@ -1,7 +1,3 @@
-/**
- * Attachment Model
- * Attachment entitás - fájlok issue-khez és comment-ekhez
- */
 export class Attachment {
   constructor(id, fileName, fileUrl, fileSize, mimeType, issueId = null, commentId = null) {
     this.id = id;

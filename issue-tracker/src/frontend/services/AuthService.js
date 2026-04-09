@@ -1,12 +1,6 @@
 import ApiService from './ApiService.js';
 
-/**
- * Auth Service - Felhasználó hitelesítése és kezelése
- */
 class AuthService {
-  /**
-   * Bejelentkezés
-   */
   static async login(email, password) {
     try {
       const response = await ApiService.post('/auth/login', {
@@ -14,12 +8,9 @@ class AuthService {
         password,
       });
 
-      // Token mentése
-      if (response.token) {
-        localStorage.setItem('token', response.token);
+      if (response.user) {
         localStorage.setItem('user', JSON.stringify(response.user));
-        
-        // Dispatch custom event for navbar update
+        localStorage.setItem('token', 'authenticated');
         window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: true, user: response.user } }));
       }
 
@@ -29,9 +20,6 @@ class AuthService {
     }
   }
 
-  /**
-   * Regisztráció
-   */
   static async register(username, email, password) {
     try {
       const response = await ApiService.post('/auth/register', {
@@ -46,42 +34,30 @@ class AuthService {
     }
   }
 
-  /**
-   * Aktuális felhasználó adatainak获取
-   */
   static async getCurrentUser() {
     try {
       const response = await ApiService.get('/auth/me');
       return response.user;
     } catch (error) {
-      // Ha a token nem érvényes, kijelentkezik
-      this.logout();
-      throw error;
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: false, user: null } }));
+      return null;
     }
   }
 
-  /**
-   * Kijelentkezés
-   */
   static logout() {
-    localStorage.removeItem('token');
+    ApiService.post('/auth/logout').catch(() => {});
     localStorage.removeItem('user');
-    
-    // Dispatch custom event for navbar update
+    localStorage.removeItem('token');
     window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: false, user: null } }));
   }
 
-  /**
-   * Aktuális felhasználó lekérése a localStorage-ből
-   */
   static getCurrentUserFromStorage() {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   }
 
-  /**
-   * Token meglétének ellenőrzése
-   */
   static isAuthenticated() {
     return !!localStorage.getItem('token');
   }

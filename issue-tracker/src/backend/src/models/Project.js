@@ -1,7 +1,3 @@
-/**
- * Project Model
- * Projekt entitás - issue-kat csoportosítja
- */
 export class Project {
   constructor(id, name, description, ownerId, status = 'active') {
     this.id = id;

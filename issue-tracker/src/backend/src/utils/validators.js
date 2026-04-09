@@ -1,7 +1,3 @@
-/**
- * Validatori függvények
- */
-
 export function validateEmail(email) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -12,7 +8,6 @@ export function validatePassword(password) {
 }
 
 export function validateUsername(username) {
-  // Username: 3-20 karakter, csak betű, szám, alulvonás
   const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
   return usernameRegex.test(username);
 }

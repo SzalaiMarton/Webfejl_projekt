@@ -1,7 +1,3 @@
-/**
- * Helper függvények
- */
-
 export function getPriorityIndex(priority) {
   const priorityMap = {
     'critical': 0,

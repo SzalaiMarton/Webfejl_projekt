@@ -11,7 +11,6 @@ function ProjectsPage() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Hitelesítés ellenőrzése
     if (!AuthService.isAuthenticated()) {
       navigate("/login");
       return;

@@ -1,12 +1,6 @@
 import ApiService from './ApiService.js';
 
-/**
- * Issue Service - Issue-k kezelése
- */
 class IssueService {
-  /**
-   * Összes issue lekérése (szűrésekkel)
-   */
   static async getAllIssues(filters = {}) {
     try {
       const queryParams = new URLSearchParams();
@@ -26,9 +20,6 @@ class IssueService {
     }
   }
 
-  /**
-   * Issue lekérése ID alapján
-   */
   static async getIssueById(issueId) {
     try {
       const response = await ApiService.get(`/issues/${issueId}`);
@@ -38,16 +29,10 @@ class IssueService {
     }
   }
 
-  /**
-   * Projekt issue-inak lekérése
-   */
   static async getProjectIssues(projectId, filters = {}) {
     return this.getAllIssues({ ...filters, projectId });
   }
 
-  /**
-   * Új issue létrehozása
-   */
   static async createIssue(projectId, title, description, priority = 'medium', labels = []) {
     try {
       const response = await ApiService.post('/issues', {
@@ -63,9 +48,6 @@ class IssueService {
     }
   }
 
-  /**
-   * Issue módosítása
-   */
   static async updateIssue(issueId, updates) {
     try {
       const response = await ApiService.patch(`/issues/${issueId}`, updates);
@@ -75,9 +57,6 @@ class IssueService {
     }
   }
 
-  /**
-   * Issue törlése
-   */
   static async deleteIssue(issueId) {
     try {
       const response = await ApiService.delete(`/issues/${issueId}`);
@@ -87,9 +66,6 @@ class IssueService {
     }
   }
 
-  /**
-   * Issue hozzárendelése felhasználóhoz
-   */
   static async assignIssue(issueId, userId) {
     try {
       const response = await ApiService.patch(`/issues/${issueId}/assign`, { userId });
@@ -99,9 +75,6 @@ class IssueService {
     }
   }
 
-  /**
-   * Label hozzáadása/eltávolítása
-   */
   static async updateIssueLabels(issueId, labelId, action) {
     try {
       const response = await ApiService.patch(`/issues/${issueId}/labels`, {

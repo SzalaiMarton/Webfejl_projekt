@@ -1,12 +1,6 @@
 import ApiService from './ApiService.js';
 
-/**
- * Label Service - Címkék kezelése
- */
 class LabelService {
-  /**
-   * Összes label lekérése
-   */
   static async getAllLabels() {
     try {
       const response = await ApiService.get('/labels');
@@ -16,9 +10,6 @@ class LabelService {
     }
   }
 
-  /**
-   * Projekt labeljéinak lekérése
-   */
   static async getProjectLabels(projectId) {
     try {
       const response = await ApiService.get(`/labels/project/${projectId}`);
@@ -28,9 +19,6 @@ class LabelService {
     }
   }
 
-  /**
-   * Új label létrehozása
-   */
   static async createLabel(projectId, name, color, description = '') {
     try {
       const response = await ApiService.post('/labels', {
@@ -45,9 +33,6 @@ class LabelService {
     }
   }
 
-  /**
-   * Label módosítása
-   */
   static async updateLabel(labelId, updates) {
     try {
       const response = await ApiService.patch(`/labels/${labelId}`, updates);
@@ -57,9 +42,6 @@ class LabelService {
     }
   }
 
-  /**
-   * Label törlése
-   */
   static async deleteLabel(labelId) {
     try {
       const response = await ApiService.delete(`/labels/${labelId}`);

@@ -28,18 +28,16 @@ function DashboardPage() {
     try {
       setIsLoading(true);
       
-      // Felhasználó adatai
       const currentUser = AuthService.getCurrentUserFromStorage();
       setUser(currentUser);
 
-      // Projektek és issue-k
       const [projectsData, issuesData] = await Promise.all([
         ProjectService.getAllProjects(),
         IssueService.getAllIssues({ sortBy: "createdAt", sortOrder: "desc" }),
       ]);
 
-      setProjects(projectsData.slice(0, 3)); // Első 3 projekt
-      setRecentIssues(issuesData.slice(0, 5)); // Legutóbbi 5 issue
+      setProjects(projectsData.slice(0, 3));
+      setRecentIssues(issuesData.slice(0, 5));
     } catch (error) {
       console.error("Error loading dashboard:", error);
     } finally {

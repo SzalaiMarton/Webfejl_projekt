@@ -6,7 +6,6 @@ import App from "./App.jsx";
 import "./styles/tokens.css";
 import "./styles/design.css";
 
-// Set the root element for react-modal
 Modal.setAppElement(document.getElementById("root"));
 
 ReactDOM.createRoot(document.getElementById("root")).render(

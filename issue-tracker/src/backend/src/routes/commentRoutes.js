@@ -5,10 +5,6 @@ import { requireAuth, optionalAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-/**
- * GET /api/comments
- * Összes comment listázása
- */
 router.get('/', optionalAuth, asyncHandler(async (req, res) => {
   try {
     const comments = CommentService.getAllComments();
@@ -18,10 +14,6 @@ router.get('/', optionalAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * GET /api/issues/:issueId/comments
- * Issue comment-jeinek lekérése
- */
 router.get('/issue/:issueId', optionalAuth, asyncHandler(async (req, res) => {
   try {
     const comments = CommentService.getIssueComments(req.params.issueId);
@@ -31,10 +23,6 @@ router.get('/issue/:issueId', optionalAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * POST /api/issues/:issueId/comments
- * Comment hozzáadása az issue-hoz
- */
 router.post('/issue/:issueId', requireAuth, asyncHandler(async (req, res) => {
   const { content } = req.body;
 
@@ -58,10 +46,6 @@ router.post('/issue/:issueId', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * PATCH /api/comments/:id
- * Comment szerkesztése
- */
 router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
   const { content } = req.body;
 
@@ -72,7 +56,6 @@ router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
   try {
     const comment = CommentService.getCommentById(req.params.id);
 
-    // Csak a comment szerzője szerkesztheti
     if (comment.authorId !== req.userId) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
@@ -87,15 +70,10 @@ router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * DELETE /api/comments/:id
- * Comment törlése
- */
 router.delete('/:id', requireAuth, asyncHandler(async (req, res) => {
   try {
     const comment = CommentService.getCommentById(req.params.id);
 
-    // Csak a comment szerzője vagy admin törölheti
     if (comment.authorId !== req.userId) {
       return res.status(403).json({ error: 'Unauthorized' });
     }

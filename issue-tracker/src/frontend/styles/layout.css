@@ -110,10 +110,7 @@ select {
 }
 
 .navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-direction: column;
+    display: grid;
     padding: var(--space-medium);
     margin-bottom: var(--gap-medium);
     border-radius: var(--radius-medium);
@@ -135,11 +132,21 @@ select {
 
 .navbar-user {
     display: flex;
+    align-items: center;
     flex-direction: column;
     padding-left: 30px;
 }
 
 .navbar-links {
+    display: grid;
+    list-style: none;
+    justify-items: center;
+    margin: 0;
+    padding: 0;
+    gap: var(--space-small);
+}
+
+.navbar-inner-links {
     display: flex;
     list-style: none;
     margin: 0;
@@ -149,6 +156,15 @@ select {
 
 .navbar-links li {
     margin: 0;
+}
+
+.navbar-brand {
+    display: flex;
+    justify-content: space-between;
+}
+
+.navbar-brand p2 {
+    font-size: var(--text-size-menu-items-medium);
 }
 
 .navbar-brand h1 {
@@ -261,13 +277,7 @@ select {
     .grid {
         grid-template-columns: repeat(2, 1fr);
     }
-    .navbar-links {
-        display: flex;
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        gap: var(--space-small);
-    }
+
     .navbar-links a {
         padding: var(--space-small) var(--space-medium);
         border-radius: var(--radius-medium);

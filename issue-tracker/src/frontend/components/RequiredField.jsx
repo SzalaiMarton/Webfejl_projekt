@@ -13,7 +13,6 @@ function RequiredField({maxChar, required, placeholder, isValid, onValidate, typ
         const val = e.target.value;
         setInput(val);
         
-        // Validáció
         const isInputValid = val.length > 0;
         if (onValidate) {
             onValidate(isInputValid);
@@ -22,7 +21,6 @@ function RequiredField({maxChar, required, placeholder, isValid, onValidate, typ
             isValid(isInputValid);
         }
 
-        // Parent onChange callback
         if (onChange) {
             onChange(e);
         }

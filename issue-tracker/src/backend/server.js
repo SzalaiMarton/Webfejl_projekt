@@ -1,39 +1,57 @@
 import express from 'express';
 import cors from 'cors';
+import session from 'express-session';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import sessionStorage from "./src/utils/session_storage.js"
 
-// Import routes
 import authRoutes from './src/routes/authRoutes.js';
 import projectRoutes from './src/routes/projectRoutes.js';
 import issueRoutes from './src/routes/issueRoutes.js';
 import commentRoutes from './src/routes/commentRoutes.js';
 import labelRoutes from './src/routes/labelRoutes.js';
 
-// Import middleware
 import { errorHandler } from './src/middleware/errorHandler.js';
 
-// Import services
 import db from './src/services/DatabaseService.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
+const isProduction = process.env.NODE_ENV === 'production';
+
+const storage = new sessionStorage();
+
+app.use(cors({ 
+  origin: FRONTEND_URL, 
+  credentials: true 
+}));
 app.use(express.json());
 
-// Routes
+app.use(session({
+  name: process.env.SESSION_NAME || 'sid',
+  store: storage,
+  secret: process.env.SESSION_SECRET || 'change_this_secret',
+  resave: false,
+  saveUninitialized: false,
+  rolling: true,
+  cookie: {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'lax',
+    maxAge: 30 * 60 * 1000
+  }
+}));
+
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/issues', issueRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/labels', labelRoutes);
 
-// Health check
 app.get('/api/health', (req, res) => {
   res.json({ 
     status: 'Backend is running', 
@@ -42,18 +60,14 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 404 handler
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });
 
-// Error handler middleware
 app.use(errorHandler);
 
-// Start server with database initialization
 async function startServer() {
   try {
-    // Initialize database
     await db.initialize();
     
     app.listen(PORT, () => {

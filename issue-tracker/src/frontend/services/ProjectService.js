@@ -1,12 +1,6 @@
 import ApiService from './ApiService.js';
 
-/**
- * Project Service - Projektek kezelése
- */
 class ProjectService {
-  /**
-   * Összes projekt lekérése
-   */
   static async getAllProjects() {
     try {
       const response = await ApiService.get('/projects');
@@ -16,9 +10,6 @@ class ProjectService {
     }
   }
 
-  /**
-   * Projekt lekérése ID alapján
-   */
   static async getProjectById(projectId) {
     try {
       const response = await ApiService.get(`/projects/${projectId}`);
@@ -28,9 +19,6 @@ class ProjectService {
     }
   }
 
-  /**
-   * Új projekt létrehozása
-   */
   static async createProject(name, description) {
     try {
       const response = await ApiService.post('/projects', {
@@ -43,9 +31,6 @@ class ProjectService {
     }
   }
 
-  /**
-   * Projekt módosítása
-   */
   static async updateProject(projectId, updates) {
     try {
       const response = await ApiService.patch(`/projects/${projectId}`, updates);
@@ -55,9 +40,6 @@ class ProjectService {
     }
   }
 
-  /**
-   * Projekt törlése
-   */
   static async deleteProject(projectId) {
     try {
       const response = await ApiService.delete(`/projects/${projectId}`);

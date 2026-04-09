@@ -5,6 +5,7 @@
 Az alkalmazás az alábbi 5+ önálló entitást kezeli, amelyek logikus kapcsolatban állnak egymással:
 
 ### 1.1 User (Felhasználó)
+
 **Leírás:** Az alkalmazás felhasználói, akik projekteket kezelhetnek és issue-kat hozhatnak létre.
 
 ```javascript
@@ -21,6 +22,7 @@ Az alkalmazás az alábbi 5+ önálló entitást kezeli, amelyek logikus kapcsol
 ```
 
 **Kapcsolatok:**
+
 - Projekt tulajdonoseként (1-N: User → Project)
 - Issue létrehozójaként (1-N: User → Issue)
 - Comment szerzőjeként (1-N: User → Comment)
@@ -28,6 +30,7 @@ Az alkalmazás az alábbi 5+ önálló entitást kezeli, amelyek logikus kapcsol
 ---
 
 ### 1.2 Project (Projekt)
+
 **Leírás:** A problémakörnyezet/feladat kategória, amely issue-kat csoportosít.
 
 ```javascript
@@ -43,6 +46,7 @@ Az alkalmazás az alábbi 5+ önálló entitást kezeli, amelyek logikus kapcsol
 ```
 
 **Kapcsolatok:**
+
 - Tulajdonos: User (N-1: Project → User)
 - Tartalmaz: Issue-kat (1-N: Project → Issue)
 - Tartalmaz: Label-eket (1-N: Project → Label)
@@ -50,6 +54,7 @@ Az alkalmazás az alábbi 5+ önálló entitást kezeli, amelyek logikus kapcsol
 ---
 
 ### 1.3 Issue (Probléma/Feladat)
+
 **Leírás:** Egy konkrét feladat vagy hiba, amely egy projekthez tartozik és nyomon követhető.
 
 ```javascript
@@ -69,6 +74,7 @@ Az alkalmazás az alábbi 5+ önálló entitást kezeli, amelyek logikus kapcsol
 ```
 
 **Kapcsolatok:**
+
 - Projekt: Project (N-1: Issue → Project)
 - Létrehozta: User (N-1: Issue → User)
 - Hozzárendelve: User (N-1: Issue → User, optional)
@@ -79,6 +85,7 @@ Az alkalmazás az alábbi 5+ önálló entitást kezeli, amelyek logikus kapcsol
 ---
 
 ### 1.4 Comment (Hozzászólás)
+
 **Leírás:** Egy issue-hoz kapcsolódó visszajelzés vagy megjegyzés.
 
 ```javascript
@@ -93,6 +100,7 @@ Az alkalmazás az alábbi 5+ önálló entitást kezeli, amelyek logikus kapcsol
 ```
 
 **Kapcsolatok:**
+
 - Issue: Issue (N-1: Comment → Issue)
 - Szerző: User (N-1: Comment → User)
 - Tartalmaz: Attachment-eket (1-N: Comment → Attachment, optional)
@@ -100,6 +108,7 @@ Az alkalmazás az alábbi 5+ önálló entitást kezeli, amelyek logikus kapcsol
 ---
 
 ### 1.5 Label (Címke/Kategória)
+
 **Leírás:** Az issue-k kategorizálásához és szűréséhez használt címkék.
 
 ```javascript
@@ -115,12 +124,14 @@ Az alkalmazás az alábbi 5+ önálló entitást kezeli, amelyek logikus kapcsol
 ```
 
 **Kapcsolatok:**
+
 - Projekt: Project (N-1: Label → Project)
 - Használt: Issue-kban (N-M: Label ↔ Issue)
 
 ---
 
 ### 1.6 Attachment (Melléklet)
+
 **Leírás:** Fájlok és média az issue-khoz és comment-ekhez.
 
 ```javascript
@@ -137,6 +148,7 @@ Az alkalmazás az alábbi 5+ önálló entitást kezeli, amelyek logikus kapcsol
 ```
 
 **Kapcsolatok:**
+
 - Issue: Issue (N-1: optional)
 - Comment: Comment (N-1: optional)
 
@@ -182,11 +194,13 @@ Attachment
 
 ## 3. CRUD Műveletek Implementációja
 
-### Teljes CRUD (2 entitás):
+### Teljes CRUD (2 entitás)
+
 - **Project**: CREATE, READ, UPDATE, DELETE
 - **Issue**: CREATE, READ, UPDATE, DELETE
 
-### Read Operations (3+ entitás):
+### Read Operations (3+ entitás)
+
 - **User**: READ (login, profile)
 - **Comment**: READ, CREATE, DELETE (az issue kontextusában)
 - **Label**: READ, CREATE, DELETE
@@ -205,6 +219,7 @@ Az alkalmazás a backend szerverben tárolt **JSON fájlokat** használ az adato
 - `data/attachments.json` - Mellékletek
 
 **Perzisztencia stratégia:**
+
 - Az adatbázis fájlok szinkronban tartódnak a memóriával
 - Minden írási művelet után az adatok azonnal fájlba kerülnek
 - Az alkalmazás induláskor betölti az összes adatot a fájlokból
@@ -214,11 +229,13 @@ Az alkalmazás a backend szerverben tárolt **JSON fájlokat** használ az adato
 ## 5. REST API Végpontok
 
 ### Authentication (`/api/auth`)
+
 - `POST /api/auth/register` - Felhasználó regisztrálása
 - `POST /api/auth/login` - Bejelentkezés
 - `GET /api/auth/me` - Aktuális felhasználó adatai
 
 ### Projects (`/api/projects`)
+
 - `GET /api/projects` - Összes projekt listázása
 - `GET /api/projects/:id` - Proyecto adatai
 - `POST /api/projects` - Új projekt létrehozása
@@ -226,6 +243,7 @@ Az alkalmazás a backend szerverben tárolt **JSON fájlokat** használ az adato
 - `DELETE /api/projects/:id` - Projekt törlése
 
 ### Issues (`/api/issues`)
+
 - `GET /api/issues` - Összes issue listázása (szűrés, keresés, rendezés)
 - `GET /api/issues/:id` - Issue-k adatai
 - `POST /api/issues` - Új issue létrehozása
@@ -233,12 +251,14 @@ Az alkalmazás a backend szerverben tárolt **JSON fájlokat** használ az adato
 - `DELETE /api/issues/:id` - Issue törlése
 
 ### Comments (`/api/comments`)
+
 - `GET /api/issues/:issueId/comments` - Issue-hoz kapcsolódó comment-ek
 - `POST /api/issues/:issueId/comments` - Comment hozzáadása
 - `PATCH /api/comments/:id` - Comment módosítása
 - `DELETE /api/comments/:id` - Comment törlése
 
 ### Labels (`/api/labels`)
+
 - `GET /api/labels` - Összes label listázása
 - `POST /api/labels` - Új label létrehozása
 - `DELETE /api/labels/:id` - Label törlése

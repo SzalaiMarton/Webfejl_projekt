@@ -5,10 +5,6 @@ import { requireAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-/**
- * GET /api/projects
- * Összes projekt listázása
- */
 router.get('/', asyncHandler(async (req, res) => {
   try {
     const projects = ProjectService.getAllProjects();
@@ -18,10 +14,6 @@ router.get('/', asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * GET /api/projects/:id
- * Projekt lekérése ID alapján
- */
 router.get('/:id', asyncHandler(async (req, res) => {
   try {
     const project = ProjectService.getProjectById(req.params.id);
@@ -38,11 +30,6 @@ router.get('/:id', asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * POST /api/projects
- * Új projekt létrehozása
- * Szükséges: Authorization header
- */
 router.post('/', requireAuth, asyncHandler(async (req, res) => {
   const { name, description } = req.body;
 
@@ -61,15 +48,10 @@ router.post('/', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * PATCH /api/projects/:id
- * Projekt szerkesztése
- */
 router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
   try {
     const project = ProjectService.getProjectById(req.params.id);
-    
-    // Csak a projekt tulajdonosa szerkesztheti
+
     if (project.ownerId !== req.userId) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
@@ -84,15 +66,10 @@ router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * DELETE /api/projects/:id
- * Projekt törlése
- */
 router.delete('/:id', requireAuth, asyncHandler(async (req, res) => {
   try {
     const project = ProjectService.getProjectById(req.params.id);
-    
-    // Csak a projekt tulajdonosa törölheti
+
     if (project.ownerId !== req.userId) {
       return res.status(403).json({ error: 'Unauthorized' });
     }

@@ -1,17 +1,10 @@
 import API_BASE_URL from '../config/apiConfig.js';
 
-/**
- * API Service - HTTP kommunikáció a backend-el
- */
 class ApiService {
-  /**
-   * GET request
-   */
   static async get(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
     const headers = {
       'Content-Type': 'application/json',
-      ...this.getAuthHeaders(),
       ...options.headers,
     };
 
@@ -19,6 +12,7 @@ class ApiService {
       const response = await fetch(url, {
         method: 'GET',
         headers,
+        credentials: 'include',
         ...options,
       });
 
@@ -28,14 +22,10 @@ class ApiService {
     }
   }
 
-  /**
-   * POST request
-   */
   static async post(endpoint, data = {}, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
     const headers = {
       'Content-Type': 'application/json',
-      ...this.getAuthHeaders(),
       ...options.headers,
     };
 
@@ -43,6 +33,7 @@ class ApiService {
       const response = await fetch(url, {
         method: 'POST',
         headers,
+        credentials: "include",
         body: JSON.stringify(data),
         ...options,
       });
@@ -53,9 +44,6 @@ class ApiService {
     }
   }
 
-  /**
-   * PATCH request
-   */
   static async patch(endpoint, data = {}, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
     const headers = {
@@ -68,6 +56,7 @@ class ApiService {
       const response = await fetch(url, {
         method: 'PATCH',
         headers,
+        credentials: 'include',
         body: JSON.stringify(data),
         ...options,
       });
@@ -78,9 +67,6 @@ class ApiService {
     }
   }
 
-  /**
-   * DELETE request
-   */
   static async delete(endpoint, options = {}) {
     const url = `${API_BASE_URL}${endpoint}`;
     const headers = {
@@ -93,6 +79,7 @@ class ApiService {
       const response = await fetch(url, {
         method: 'DELETE',
         headers,
+        credentials: 'include',
         ...options,
       });
 
@@ -102,9 +89,6 @@ class ApiService {
     }
   }
 
-  /**
-   * Response handler - status codes feldolgozása
-   */
   static async handleResponse(response) {
     const contentType = response.headers.get('content-type');
     const data = contentType?.includes('application/json')
@@ -122,14 +106,7 @@ class ApiService {
     return data;
   }
 
-  /**
-   * Auth header összeállítása (Bearer token)
-   */
-  static getAuthHeaders() {
-    const token = localStorage.getItem('token');
-    if (!token) return {};
-    return { Authorization: `Bearer ${token}` };
-  }
+  
 }
 
 export default ApiService;
