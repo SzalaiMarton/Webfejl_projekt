@@ -5,6 +5,7 @@ import AuthService from "../services/AuthService.js";
 import '../styles/tokens.css'
 import '../styles/design.css'
 import '../styles/layout.css'
+import CustomButton from "./CustomButton.jsx";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -61,19 +62,26 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-      <div className="navbar-brand">
-        <h1>IssueTracker</h1>
         {isAuthenticated && (
-        <>
+        <div className="navbar-brand-logged-in">
+          <h1>IssueTracker</h1>
           <div className="navbar-user">
-            <p2>{user.username}</p2>
-            <button onClick={handleLogout} className="logout-btn">
-              Logout
-            </button>
+            <p2>Welcome, {user.username}</p2>
+            <CustomButton
+              onClick={handleLogout}
+              text={"Logout"}
+              className={"logout-btn"}
+
+            />
           </div>
-        </>
+        </div>
+
       )}
-      </div>
+      {!isAuthenticated && (
+        <div className="navbar-brand-logged-out">
+          <h1>IssueTracker</h1>
+        </div>
+      )}
       <ul className="navbar-links">
         {isAuthenticated && (
           <>
@@ -91,6 +99,11 @@ function Navbar() {
               <li>
                 <NavLink to="/create-issue" className={({ isActive }) => (isActive ? "active" : "")}>
                   Create Issue
+                </NavLink>
+              </li>
+              <li>
+                <NavLink to="/create-project" className={({ isActive }) => (isActive ? "active" : "")}>
+                  Create Project
                 </NavLink>
               </li>
             </div>

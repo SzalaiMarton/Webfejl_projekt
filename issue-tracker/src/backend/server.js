@@ -84,7 +84,6 @@ async function startServer() {
       console.log(`   POST   /api/issues`);
       console.log(`   GET    /api/labels`);
       console.log(`   POST   /api/labels`);
-      console.log(`\n`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);

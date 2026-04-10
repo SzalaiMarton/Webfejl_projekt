@@ -1,7 +1,7 @@
 import express from 'express';
 import IssueService from '../services/IssueService.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
-import { requireAuth, optionalAuth } from '../middleware/authMiddleware.js';
+import { requireSessionAuth, optionalAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -35,7 +35,7 @@ router.get('/:id', optionalAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-router.post('/', requireAuth, asyncHandler(async (req, res) => {
+router.post('/', requireSessionAuth, asyncHandler(async (req, res) => {
   const { projectId, title, description, priority, labels } = req.body;
 
   if (!projectId || !title) {
@@ -63,7 +63,7 @@ router.post('/', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
+router.patch('/:id', requireSessionAuth, asyncHandler(async (req, res) => {
   try {
     const issue = IssueService.getIssueById(req.params.id);
 
@@ -81,7 +81,7 @@ router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-router.delete('/:id', requireAuth, asyncHandler(async (req, res) => {
+router.delete('/:id', requireSessionAuth, asyncHandler(async (req, res) => {
   try {
     const issue = IssueService.getIssueById(req.params.id);
 
@@ -99,7 +99,7 @@ router.delete('/:id', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-router.patch('/:id/assign', requireAuth, asyncHandler(async (req, res) => {
+router.patch('/:id/assign', requireSessionAuth, asyncHandler(async (req, res) => {
   const { userId } = req.body;
 
   if (!userId) {
@@ -123,11 +123,7 @@ router.patch('/:id/assign', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * PATCH /api/issues/:id/unassign
- * Issue szétrendelése
- */
-router.patch('/:id/unassign', requireAuth, asyncHandler(async (req, res) => {
+router.patch('/:id/unassign', requireSessionAuth, asyncHandler(async (req, res) => {
   try {
     const issue = IssueService.getIssueById(req.params.id);
 
@@ -145,11 +141,7 @@ router.patch('/:id/unassign', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-/**
- * PATCH /api/issues/:id/labels
- * Label hozzáadása vagy eltávolítása
- */
-router.patch('/:id/labels', requireAuth, asyncHandler(async (req, res) => {
+router.patch('/:id/labels', requireSessionAuth, asyncHandler(async (req, res) => {
   const { labelId, action } = req.body;
 
   if (!labelId || !action || !['add', 'remove'].includes(action)) {

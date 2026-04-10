@@ -2,14 +2,7 @@ import db from './DatabaseService.js';
 import { Issue } from '../models/Issue.js';
 import { v4 as uuidv4 } from 'uuid';
 
-/**
- * IssueService
- * Issue-k kezelése: CREATE, READ, UPDATE, DELETE
- */
 class IssueService {
-  /**
-   * Issue létrehozása
-   */
   async createIssue(projectId, title, description, createdById, priority = 'medium', labels = []) {
     if (!projectId || !title) {
       throw new Error('Project ID and title are required');
@@ -35,33 +28,25 @@ class IssueService {
     return await db.createIssue(issue);
   }
 
-  /**
-   * Összes issue lekérése
-   */
   getAllIssues(filters = {}) {
     let issues = db.getAllIssues();
 
-    // Szűrés projekt alapján
     if (filters.projectId) {
       issues = issues.filter(i => i.projectId === filters.projectId);
     }
 
-    // Szűrés prioritás alapján
     if (filters.priority) {
       issues = issues.filter(i => i.priority === filters.priority);
     }
 
-    // Szűrés státusz alapján
     if (filters.status) {
       issues = issues.filter(i => i.status === filters.status);
     }
 
-    // Szűrés label alapján
     if (filters.labels && filters.labels.length > 0) {
       issues = issues.filter(i => filters.labels.some(label => i.labels.includes(label)));
     }
 
-    // Keresés cím alapján
     if (filters.search) {
       const searchLower = filters.search.toLowerCase();
       issues = issues.filter(i => 
@@ -70,7 +55,6 @@ class IssueService {
       );
     }
 
-    // Rendezés
     if (filters.sortBy) {
       issues.sort((a, b) => {
         if (filters.sortBy === 'createdAt') {
@@ -89,9 +73,6 @@ class IssueService {
     return issues;
   }
 
-  /**
-   * Issue lekérése ID alapján
-   */
   getIssueById(id) {
     const issue = db.getIssueById(id);
     if (!issue) {
@@ -100,9 +81,6 @@ class IssueService {
     return issue;
   }
 
-  /**
-   * Projekt issue-inak lekérése
-   */
   getProjectIssues(projectId, filters = {}) {
     const project = db.getProjectById(projectId);
     if (!project) {
@@ -112,16 +90,12 @@ class IssueService {
     return this.getAllIssues({ ...filters, projectId });
   }
 
-  /**
-   * Issue szerkesztése
-   */
   async updateIssue(id, updates) {
     const issue = db.getIssueById(id);
     if (!issue) {
       throw new Error('Issue not found');
     }
 
-    // Csak bizonyos mezőket lehet módosítani
     const allowedUpdates = ['title', 'description', 'priority', 'status', 'assignedToId', 'labels'];
     const validUpdates = {};
     
@@ -134,9 +108,6 @@ class IssueService {
     return await db.updateIssue(id, validUpdates);
   }
 
-  /**
-   * Issue törlése (kaskádolt: törlés a comment-ek is)
-   */
   async deleteIssue(id) {
     const issue = db.getIssueById(id);
     if (!issue) {
@@ -146,9 +117,6 @@ class IssueService {
     return await db.deleteIssue(id);
   }
 
-  /**
-   * Issue hozzárendelése felhasználóhoz
-   */
   async assignIssue(issueId, userId) {
     const issue = db.getIssueById(issueId);
     if (!issue) {
@@ -163,9 +131,6 @@ class IssueService {
     return await db.updateIssue(issueId, { assignedToId: userId });
   }
 
-  /**
-   * Issue szétrendelése
-   */
   async unassignIssue(issueId) {
     const issue = db.getIssueById(issueId);
     if (!issue) {
@@ -175,9 +140,6 @@ class IssueService {
     return await db.updateIssue(issueId, { assignedToId: null });
   }
 
-  /**
-   * Label hozzáadása issue-hoz
-   */
   async addLabelToIssue(issueId, labelId) {
     const issue = db.getIssueById(issueId);
     if (!issue) {
@@ -197,9 +159,6 @@ class IssueService {
     return issue;
   }
 
-  /**
-   * Label eltávolítása issue-ből
-   */
   async removeLabelFromIssue(issueId, labelId) {
     const issue = db.getIssueById(issueId);
     if (!issue) {

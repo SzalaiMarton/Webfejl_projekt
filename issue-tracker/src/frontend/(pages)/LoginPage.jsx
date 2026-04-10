@@ -1,4 +1,4 @@
-import CustomButton from "../components/LoginButton";
+import CustomButton from "../components/CustomButton.jsx";
 import PopupCard from "../components/PopupCard";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -109,16 +109,16 @@ function LoginPage() {
               type="password"
             />
           </div>
-          <div style={{ marginTop: "2rem" }}>
+          <div>
             <CustomButton 
               onClick={handleLogin} 
               disabled={isLoading}
               text={"Login"}
             />
           </div>
-          {isLoading && <p style={{ marginTop: "1rem", textAlign: "center" }}>Logging in...</p>}
+          {isLoading && <p style={{ textAlign: "center" }}>Logging in...</p>}
 
-          <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
+          <div style={{ textAlign: "center" }}>
             <p>
               Don't have an account?{" "}
               <a 

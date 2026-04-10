@@ -1,34 +1,45 @@
 import db from './DatabaseService.js';
 import { Project } from '../models/Project.js';
 import { v4 as uuidv4 } from 'uuid';
+import UserService from './UserService.js';
 
-/**
- * ProjectService
- * Projektek kezelése: CREATE, READ, UPDATE, DELETE
- */
 class ProjectService {
-  /**
-   * Projekt létrehozása
-   */
   async createProject(name, description, ownerId) {
     if (!name || name.trim() === '') {
       throw new Error('Project name is required');
     }
 
     const project = new Project(uuidv4(), name, description || '', ownerId);
-    return await db.createProject(project);
+    return await db.createProject(project)
+    .then(
+      this.bindProjectToUser(project.id, ownerId).then(
+        () => {},
+        () => {throw new Error("Project failed to bind to user.")}
+      ), 
+      () => {throw new Error("Project failed to create.")}
+    );
   }
 
-  /**
-   * Összes projekt lekérése
-   */
+  async bindProjectToUser(projectId, ownerId) {
+    let user = null;
+    try {
+      user = UserService.getUserById(ownerId);
+      if (!user) { throw new Error("User not found."); }
+    }
+    catch (error) {
+      console.log(error);
+      return null;
+    }
+
+    return await db.updateUser(ownerId, {
+      createdProjects: [...user.createdProjects, projectId]
+    });
+  }
+
   getAllProjects() {
     return db.getAllProjects();
   }
 
-  /**
-   * Projekt lekérése ID alapján
-   */
   getProjectById(id) {
     const project = db.getProjectById(id);
     if (!project) {
@@ -37,23 +48,16 @@ class ProjectService {
     return project;
   }
 
-  /**
-   * Felhasználó projektjei
-   */
   getUserProjects(userId) {
     return db.getProjectsByOwnerId(userId);
   }
 
-  /**
-   * Projekt szerkesztése
-   */
   async updateProject(id, updates) {
     const project = db.getProjectById(id);
     if (!project) {
       throw new Error('Project not found');
     }
 
-    // Csak bizonyos mezőket lehet módosítani
     const allowedUpdates = ['name', 'description', 'status'];
     const validUpdates = {};
     
@@ -66,9 +70,6 @@ class ProjectService {
     return await db.updateProject(id, validUpdates);
   }
 
-  /**
-   * Projekt törlése (kaskádolt: törlés az issue-k is)
-   */
   async deleteProject(id) {
     const project = db.getProjectById(id);
     if (!project) {
@@ -78,9 +79,6 @@ class ProjectService {
     return await db.deleteProject(id);
   }
 
-  /**
-   * Projekt issue-inak lekérése
-   */
   getProjectIssues(projectId) {
     const project = db.getProjectById(projectId);
     if (!project) {
@@ -89,9 +87,6 @@ class ProjectService {
     return db.getIssuesByProjectId(projectId);
   }
 
-  /**
-   * Projekt label-jeinek lekérése
-   */
   getProjectLabels(projectId) {
     const project = db.getProjectById(projectId);
     if (!project) {

@@ -89,7 +89,11 @@ class DatabaseService {
               role: user.role,
               avatar: user.avatar,
               createdAt: user.createdAt,
-              updatedAt: user.updatedAt
+              updatedAt: user.updatedAt,
+              createdProjects: user.createdProjects,
+              assignedProjects: user.assignedProjects,
+              createdIssues: user.createdIssues,
+              assignedIssues: user.assignedIssues
             };
           }
           return user;

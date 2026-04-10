@@ -1,7 +1,7 @@
 import express from 'express';
 import CommentService from '../services/CommentService.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
-import { requireAuth, optionalAuth } from '../middleware/authMiddleware.js';
+import { requireSessionAuth, optionalAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -23,7 +23,7 @@ router.get('/issue/:issueId', optionalAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-router.post('/issue/:issueId', requireAuth, asyncHandler(async (req, res) => {
+router.post('/issue/:issueId', requireSessionAuth, asyncHandler(async (req, res) => {
   const { content } = req.body;
 
   if (!content) {
@@ -46,7 +46,7 @@ router.post('/issue/:issueId', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
+router.patch('/:id', requireSessionAuth, asyncHandler(async (req, res) => {
   const { content } = req.body;
 
   if (!content) {
@@ -70,7 +70,7 @@ router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-router.delete('/:id', requireAuth, asyncHandler(async (req, res) => {
+router.delete('/:id', requireSessionAuth, asyncHandler(async (req, res) => {
   try {
     const comment = CommentService.getCommentById(req.params.id);
 

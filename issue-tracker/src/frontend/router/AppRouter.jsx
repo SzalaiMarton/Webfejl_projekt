@@ -9,6 +9,7 @@ import CreateIssuePage from "../(pages)/CreateIssuePage.jsx";
 import LoginPage from "../(pages)/LoginPage.jsx";
 import RegisterPage from "../(pages)/RegisterPage.jsx";
 import NotFoundPage from "../(pages)/NotFoundPage.jsx";
+import CreateProjectPage from "../(pages)/CreateProjectPage.jsx";
 
 function AppRouter() {
   return (
@@ -23,6 +24,7 @@ function AppRouter() {
         <Route path="/projects/:id" element={<ProjectDetailsPage />} />
         <Route path="/issues/:id" element={<IssueDetailsPage />} />
         <Route path="/create-issue" element={<CreateIssuePage />} />
+        <Route path="/create-project" element={<CreateProjectPage/>}/>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

@@ -46,6 +46,10 @@ p {
     font-family: var(--text-family-p);
 }
 
+p2 {
+    font-family: var(--text-family-p);
+}
+
 label {
     font-family: var(--text-family-p);
 }
@@ -111,6 +115,10 @@ li {
     color: var(--color-text-s);
 }
 
+/*-------------------------------------------------
+                ISSUE
+-------------------------------------------------*/
+
 .create-issue-form-create-button {
     background-color: rgba(38, 140, 13);
     color: rgb(255, 255, 255);
@@ -131,6 +139,41 @@ li {
 .create-issue-form-project-picker label {
     font-size: larger;
 }
+
+/*-------------------------------------------------
+                ISSUE
+-------------------------------------------------*/
+
+
+/*-------------------------------------------------
+                PROJECT
+-------------------------------------------------*/
+
+.create-project-form-create-button {
+    background-color: rgba(38, 140, 13);
+    color: rgb(255, 255, 255);
+}
+
+.create-project-form-desc p {
+    font-size: small;
+}
+
+.create-project-form-desc label {
+    font-size: larger;
+}
+
+.create-project-form-title label {
+    font-size: larger;
+}
+
+.create-project-form-project-picker label {
+    font-size: larger;
+}
+
+/*-------------------------------------------------
+                PROJECT
+-------------------------------------------------*/
+
 
 .form-container-field label {
     font-size: larger;

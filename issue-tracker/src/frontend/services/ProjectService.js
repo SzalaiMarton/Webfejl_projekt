@@ -23,10 +23,11 @@ class ProjectService {
     try {
       const response = await ApiService.post('/projects', {
         name,
-        description,
+        description
       });
       return response.project;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }

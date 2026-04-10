@@ -1,7 +1,7 @@
 import express from 'express';
 import ProjectService from '../services/ProjectService.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
-import { requireAuth } from '../middleware/authMiddleware.js';
+import { requireSessionAuth } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
@@ -30,8 +30,10 @@ router.get('/:id', asyncHandler(async (req, res) => {
   }
 }));
 
-router.post('/', requireAuth, asyncHandler(async (req, res) => {
+router.post('/', requireSessionAuth, asyncHandler(async (req, res) => {
   const { name, description } = req.body;
+
+  console.log(req)
 
   if (!name) {
     return res.status(400).json({ error: 'Project name is required' });
@@ -44,11 +46,12 @@ router.post('/', requireAuth, asyncHandler(async (req, res) => {
       project
     });
   } catch (error) {
+    console.log(error)
     res.status(400).json({ error: error.message });
   }
 }));
 
-router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
+router.patch('/:id', requireSessionAuth, asyncHandler(async (req, res) => {
   try {
     const project = ProjectService.getProjectById(req.params.id);
 
@@ -66,7 +69,7 @@ router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-router.delete('/:id', requireAuth, asyncHandler(async (req, res) => {
+router.delete('/:id', requireSessionAuth, asyncHandler(async (req, res) => {
   try {
     const project = ProjectService.getProjectById(req.params.id);
 

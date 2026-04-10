@@ -1,5 +1,3 @@
-import React from "react";
-
 function CustomButton({ type, disabled, onClick, className, text }) {
   return (
     <button

@@ -1,5 +1,4 @@
 import AutoResizeTextarea from "../components/AutoResizeTextarea";
-import RequiredFieldText from "../components/RequiredFieldText";
 import PopupCard from "../components/PopupCard";
 import { useState, useEffect } from "react";
 import RequiredField from "../components/RequiredField";
@@ -88,7 +87,7 @@ function CreateIssuePage() {
         onClose={() => setIsErrorOpen(false)}
         innerClassName="error-card-message"
         outerClassName="error-card-container"
-        title={"Error"}
+        title={"Error!"}
       />
       <PopupCard 
         isOpen={isSuccessOpen}
@@ -96,7 +95,7 @@ function CreateIssuePage() {
         onClose={() => setIsSuccessOpen(false)}
         innerClassName="suc-login-card-message"
         outerClassName="suc-login-card-container"
-        title={"Error"}
+        title={"Success!"}
       />
       <div className="create-issue-form">
         <div>

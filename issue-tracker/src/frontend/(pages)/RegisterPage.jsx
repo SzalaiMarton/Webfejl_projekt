@@ -1,4 +1,4 @@
-import CustomButton from "../components/LoginButton";
+import CustomButton from "../components/CustomButton.jsx";
 import PopupCard from "../components/PopupCard";
 import InputField from "../components/InputField";
 import { useState } from "react";
@@ -93,7 +93,7 @@ function RegisterPage() {
         onClose={() => setIsErrorOpen(false)}
         innerClassName="error-card-message"
         outerClassName="error-card-container"
-        title={"Error"}
+        title={"Error!"}
       />
       <PopupCard 
         isOpen={isSuccessOpen}
@@ -101,7 +101,7 @@ function RegisterPage() {
         onClose={() => setIsSuccessOpen(false)}
         innerClassName="suc-login-card-message"
         outerClassName="suc-login-card-container"
-        title={"Error"}
+        title={"Success!"}
       />
       <div className="form-container">
         <div>
@@ -166,7 +166,7 @@ function RegisterPage() {
               />
           </div>
 
-          <div style={{ marginTop: "2rem" }}>
+          <div>
             <CustomButton 
               onClick={handleRegister} 
               disabled={isLoading}
@@ -176,7 +176,7 @@ function RegisterPage() {
             </CustomButton>
           </div>
 
-          <div style={{ marginTop: "1.5rem", textAlign: "center" }}>
+          <div style={{ textAlign: "center" }}>
             <p>
               Already have an account?{" "}
               <a 
@@ -192,7 +192,7 @@ function RegisterPage() {
             </p>
           </div>
 
-          {isLoading && <p style={{ marginTop: "1rem", textAlign: "center" }}>Registering...</p>}
+          {isLoading && <p style={{ textAlign: "center" }}>Registering...</p>}
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import express from 'express';
 import LabelService from '../services/LabelService.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
-import { requireAuth, optionalAuth } from '../middleware/authMiddleware.js';
+import { requireSessionAuth, optionalAuth } from '../middleware/authMiddleware.js';
 import ProjectService from '../services/ProjectService.js';
 
 const router = express.Router();
@@ -24,7 +24,7 @@ router.get('/project/:projectId', optionalAuth, asyncHandler(async (req, res) =>
   }
 }));
 
-router.post('/', requireAuth, asyncHandler(async (req, res) => {
+router.post('/', requireSessionAuth, asyncHandler(async (req, res) => {
   const { projectId, name, color, description } = req.body;
 
   if (!projectId || !name || !color) {
@@ -49,7 +49,7 @@ router.post('/', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
+router.patch('/:id', requireSessionAuth, asyncHandler(async (req, res) => {
   try {
     const label = LabelService.getLabelById(req.params.id);
     const project = ProjectService.getProjectById(label.projectId);
@@ -68,7 +68,7 @@ router.patch('/:id', requireAuth, asyncHandler(async (req, res) => {
   }
 }));
 
-router.delete('/:id', requireAuth, asyncHandler(async (req, res) => {
+router.delete('/:id', requireSessionAuth, asyncHandler(async (req, res) => {
   try {
     const label = LabelService.getLabelById(req.params.id);
     const project = ProjectService.getProjectById(label.projectId);

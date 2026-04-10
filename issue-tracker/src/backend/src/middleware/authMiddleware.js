@@ -46,6 +46,7 @@ export function optionalAuth(req, res, next) {
 }
 
 export function requireSessionAuth(req, res, next) {
+  console.log(req.session)
   try {
     if (req.session && req.session.userId) {
       req.userId = req.session.userId;
