@@ -6,10 +6,12 @@ import ProjectsPage from "../(pages)/ProjectsPage.jsx";
 import ProjectDetailsPage from "../(pages)/ProjectDetailsPage.jsx";
 import IssueDetailsPage from "../(pages)/IssueDetailsPage.jsx";
 import CreateIssuePage from "../(pages)/CreateIssuePage.jsx";
+import EditIssuePage from "../(pages)/EditIssuePage.jsx";
 import LoginPage from "../(pages)/LoginPage.jsx";
 import RegisterPage from "../(pages)/RegisterPage.jsx";
 import NotFoundPage from "../(pages)/NotFoundPage.jsx";
 import CreateProjectPage from "../(pages)/CreateProjectPage.jsx";
+import EditProjectPage from "../(pages)/EditProjectPage.jsx";
 
 function AppRouter() {
   return (
@@ -22,7 +24,9 @@ function AppRouter() {
         <Route path="/dashboard" element={<DashboardPage />} />
         <Route path="/projects" element={<ProjectsPage />} />
         <Route path="/projects/:id" element={<ProjectDetailsPage />} />
+        <Route path="/projects/:id/edit" element={<EditProjectPage />} />
         <Route path="/issues/:id" element={<IssueDetailsPage />} />
+        <Route path="/issues/:id/edit" element={<EditIssuePage />} />
         <Route path="/create-issue" element={<CreateIssuePage />} />
         <Route path="/create-project" element={<CreateProjectPage/>}/>
         <Route path="*" element={<NotFoundPage />} />

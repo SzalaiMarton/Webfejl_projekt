@@ -19,7 +19,20 @@ class CommentService {
     }
 
     const comment = new Comment(uuidv4(), issueId, authorId, content);
-    return await db.createComment(comment);
+    const created = await db.createComment(comment);
+
+    try {
+      const user = db.getUserById(authorId);
+      if (user) {
+        await db.updateUser(authorId, {
+          createdComments: [...(user.createdComments || []), created.id]
+        });
+      }
+    } catch (err) {
+      console.error('Failed to bind comment to user:', err);
+    }
+
+    return created;
   }
 
   getAllComments() {

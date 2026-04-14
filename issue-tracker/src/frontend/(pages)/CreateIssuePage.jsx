@@ -7,6 +7,7 @@ import ProjectService from "../services/ProjectService.js";
 import IssueService from "../services/IssueService.js";
 import AuthService from "../services/AuthService.js";
 import TitleBar from "../components/TitleBar.jsx";
+import { useStore } from "../services/StoreContext.jsx";
 
 function CreateIssuePage() {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ function CreateIssuePage() {
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingProjects, setIsLoadingProjects] = useState(true);
+  const { dispatch } = useStore();
 
   useEffect(() => {
     if (!AuthService.isAuthenticated()) {
@@ -62,6 +64,19 @@ function CreateIssuePage() {
         description,
         priority
       );
+
+      // optimistic update to store
+      dispatch({ type: 'ADD_ISSUE', payload: {
+        id: 'temp-' + Date.now(),
+        projectId: selectedProjectId,
+        title,
+        description,
+        priority,
+        status: 'open',
+        labels: [],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }});
 
       setIsSuccessOpen(true);
       setTimeout(() => {

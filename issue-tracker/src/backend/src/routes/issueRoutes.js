@@ -1,5 +1,6 @@
 import express from 'express';
 import IssueService from '../services/IssueService.js';
+import db from '../services/DatabaseService.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 import { requireSessionAuth, optionalAuth } from '../middleware/authMiddleware.js';
 
@@ -102,18 +103,28 @@ router.delete('/:id', requireSessionAuth, asyncHandler(async (req, res) => {
 router.patch('/:id/assign', requireSessionAuth, asyncHandler(async (req, res) => {
   const { userId } = req.body;
 
-  if (!userId) {
-    return res.status(400).json({ error: 'User ID is required' });
-  }
-
   try {
     const issue = IssueService.getIssueById(req.params.id);
+    const project = db.getProjectById(issue.projectId);
 
-    if (issue.createdById !== req.userId) {
-      return res.status(403).json({ error: 'Unauthorized' });
+    // if assigning someone else, only project owner or issue creator can assign others
+    if (userId && userId !== req.userId) {
+      if (!project || project.ownerId !== req.userId) {
+        return res.status(403).json({ error: 'Only project owner can assign other users' });
+      }
     }
 
-    const updatedIssue = await IssueService.assignIssue(req.params.id, userId);
+    // if self-assign, user must be member of project or project owner or issue creator
+    const targetUserId = userId || req.userId;
+    const targetUser = db.getUserById(targetUserId);
+    if (!targetUser) return res.status(404).json({ error: 'User not found' });
+
+    const isMember = (targetUser.assignedProjects || []).includes(issue.projectId);
+    if (targetUserId === req.userId && !isMember && project.ownerId !== req.userId && issue.createdById !== req.userId) {
+      return res.status(403).json({ error: 'Only project members or owners can self-assign' });
+    }
+
+    const updatedIssue = await IssueService.assignIssue(req.params.id, targetUserId);
     res.json({
       message: 'Issue assigned successfully',
       issue: updatedIssue
@@ -126,9 +137,14 @@ router.patch('/:id/assign', requireSessionAuth, asyncHandler(async (req, res) =>
 router.patch('/:id/unassign', requireSessionAuth, asyncHandler(async (req, res) => {
   try {
     const issue = IssueService.getIssueById(req.params.id);
+    if (!issue) return res.status(404).json({ error: 'Issue not found' });
 
-    if (issue.createdById !== req.userId) {
-      return res.status(403).json({ error: 'Unauthorized' });
+    // allow unassign if the requester is the assignee (self) or the project owner
+    const project = db.getProjectById(issue.projectId);
+    const requesterId = req.userId;
+
+    if (issue.assignedToId !== requesterId && project?.ownerId !== requesterId) {
+      return res.status(403).json({ error: 'Only assignee or project owner can unassign' });
     }
 
     const updatedIssue = await IssueService.unassignIssue(req.params.id);

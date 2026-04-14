@@ -46,7 +46,15 @@ p {
     font-family: var(--text-family-p);
 }
 
-p2 {
+h4 {
+    font-family: var(--text-family-p);
+}
+
+h5 {
+    font-family: var(--text-family-p);
+}
+
+h6 {
     font-family: var(--text-family-p);
 }
 

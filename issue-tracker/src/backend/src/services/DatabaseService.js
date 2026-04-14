@@ -93,7 +93,8 @@ class DatabaseService {
               createdProjects: user.createdProjects,
               assignedProjects: user.assignedProjects,
               createdIssues: user.createdIssues,
-              assignedIssues: user.assignedIssues
+              assignedIssues: user.assignedIssues,
+              createdComments: user.createdComments || []
             };
           }
           return user;

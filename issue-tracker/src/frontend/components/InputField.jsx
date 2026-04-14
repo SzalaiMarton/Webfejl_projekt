@@ -3,14 +3,14 @@ import { useState, useEffect } from "react";
 import "../styles/design.css"
 import "../styles/tokens.css"
 
-function InputField({ maxLength, isRequired, placeholderText, input, verify, disabled = false, type = "text" }) {
+function InputField({ id = "", errorsEnabled = true, maxLength, isRequired, placeholderText, textValue, verify, disabled = false, type = "text" }) {
   const [inputValue, setInputValue] = useState("");
   const [errors, setErrors] = useState([]);
 
   const handleChange = (e) => {
     const value = e.target.value;
     setInputValue(value);
-    input(value);
+    textValue(value);
   };
 
   useEffect(() => {
@@ -21,6 +21,7 @@ function InputField({ maxLength, isRequired, placeholderText, input, verify, dis
   return (
     <div className="input-field">
       <input
+        id={id}
         maxLength={maxLength}
         required={isRequired}
         type={type}
@@ -28,9 +29,10 @@ function InputField({ maxLength, isRequired, placeholderText, input, verify, dis
         value={inputValue}
         onChange={handleChange}
         disabled={disabled}
+        
       />
 
-      {errors.length > 0 && (
+      {errorsEnabled && errors.length > 0 && (
         <ul>
           {errors.map((err, i) => (
             <li key={i}>{err}</li>
@@ -38,9 +40,14 @@ function InputField({ maxLength, isRequired, placeholderText, input, verify, dis
         </ul>
       )}
 
-      {errors.length === 0 && inputValue.length > 0 && (
+      {(errorsEnabled && (errors.length === 0 || errors.length === 0 && inputValue.length > 0)) && (
         <p></p>
       )}
+
+      {!errorsEnabled && (
+        <p></p>
+      )}
+    
     </div>
   );
 }

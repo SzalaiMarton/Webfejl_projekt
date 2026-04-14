@@ -58,19 +58,3 @@ export function requireSessionAuth(req, res, next) {
     return res.status(401).json({ error: 'Authentication failed', status: 401 });
   }
 }
-
-function throttle(callback, delay) {
-  let lastCall = 0;
-  return (...args) => {
-    const now = Date.now();
-    if (now - lastCall >= delay) {
-      lastCall = now;
-      callback(...args);
-    }
-  };
-}
-
-export async function refreshSession() {
-  const res = await fetch("/api/auth/session/refresh", { method: "POST" });
-  if (!res.ok) handleSessionExpired();
-}

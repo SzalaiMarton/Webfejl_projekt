@@ -25,7 +25,20 @@ class IssueService {
       labels
     );
 
-    return await db.createIssue(issue);
+    const created = await db.createIssue(issue);
+
+    try {
+      const user = db.getUserById(createdById);
+      if (user) {
+        const updated = await db.updateUser(createdById, {
+          createdIssues: [...(user.createdIssues || []), created.id]
+        });
+      }
+    } catch (err) {
+      console.error('Failed to bind issue to user:', err);
+    }
+
+    return created;
   }
 
   getAllIssues(filters = {}) {
@@ -128,7 +141,33 @@ class IssueService {
       throw new Error('User not found');
     }
 
-    return await db.updateIssue(issueId, { assignedToId: userId });
+    // Remove issue from previous assignee if exists
+    if (issue.assignedToId) {
+      try {
+        const prevUser = db.getUserById(issue.assignedToId);
+        if (prevUser) {
+          await db.updateUser(prevUser.id, {
+            assignedIssues: (prevUser.assignedIssues || []).filter(i => i !== issueId)
+          });
+        }
+      } catch (e) {
+        console.error('Failed to update previous assignee:', e);
+      }
+    }
+
+    // Assign to new user
+    const updatedIssue = await db.updateIssue(issueId, { assignedToId: userId });
+
+    try {
+      const freshUser = db.getUserById(userId);
+      await db.updateUser(userId, {
+        assignedIssues: [...(freshUser.assignedIssues || []), issueId]
+      });
+    } catch (err) {
+      console.error('Failed to add issue to user.assignedIssues', err);
+    }
+
+    return updatedIssue;
   }
 
   async unassignIssue(issueId) {
@@ -137,7 +176,23 @@ class IssueService {
       throw new Error('Issue not found');
     }
 
-    return await db.updateIssue(issueId, { assignedToId: null });
+    const prevAssignee = issue.assignedToId;
+    const updatedIssue = await db.updateIssue(issueId, { assignedToId: null });
+
+    if (prevAssignee) {
+      try {
+        const prevUser = db.getUserById(prevAssignee);
+        if (prevUser) {
+          await db.updateUser(prevAssignee, {
+            assignedIssues: (prevUser.assignedIssues || []).filter(i => i !== issueId)
+          });
+        }
+      } catch (err) {
+        console.error('Failed to remove issue from previous assignee:', err);
+      }
+    }
+
+    return updatedIssue;
   }
 
   async addLabelToIssue(issueId, labelId) {

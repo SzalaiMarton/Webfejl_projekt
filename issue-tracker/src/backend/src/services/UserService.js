@@ -28,7 +28,11 @@ class UserService {
 
   loginUser(email, password) {
     const user = db.getUserByEmail(email);
-    
+
+    if(!user) {
+      throw new Error("User not found.");
+    }
+
     if (user.password !== password || !user) {
       throw new Error('Invalid email or password');
     }

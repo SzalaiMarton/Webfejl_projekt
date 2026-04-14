@@ -104,6 +104,11 @@ function IssueDetailsPage() {
       <button onClick={handleDeleteIssue} style={{ marginBottom: "2rem", padding: "0.5rem 1rem", backgroundColor: "#fee", color: "#c00" }}>
         Delete Issue
       </button>
+      <div style={{ marginBottom: '2rem' }}>
+        <button onClick={() => navigate(`/issues/${id}/edit`)} style={{ marginRight: '0.5rem' }}>
+          Edit Issue
+        </button>
+      </div>
 
       <h3>Comments ({comments.length})</h3>
       

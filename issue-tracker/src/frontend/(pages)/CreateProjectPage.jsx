@@ -7,6 +7,7 @@ import AuthService from "../services/AuthService.js";
 import TitleBar from "../components/TitleBar.jsx";
 import CustomButton from "../components/CustomButton.jsx";
 import ProjectService from "../services/ProjectService.js";
+import { useStore } from "../services/StoreContext.jsx";
 
 function CreateProjectPage() {
   const navigate = useNavigate();
@@ -18,6 +19,7 @@ function CreateProjectPage() {
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isTitleValid, setIsTitleValid] = useState(false);
+  const { dispatch } = useStore();
 
   useEffect(() => {
     if (!AuthService.isAuthenticated()) {
@@ -53,15 +55,19 @@ function CreateProjectPage() {
     }
 
     try {
-      await ProjectService.createProject(
+      const project = await ProjectService.createProject(
         title,
         description
       );
 
+      if (project) {
+        dispatch({ type: 'ADD_PROJECT', payload: project });
+      }
+
       setIsSuccessOpen(true);
-      /*setTimeout(() => {
-        navigate("/projects");
-      }, 2000);*/
+      setTimeout(() => {
+        navigate('/projects');
+      }, 700);
     }
     catch (error) {
       setErrorMessage("Something went wrong " + error);

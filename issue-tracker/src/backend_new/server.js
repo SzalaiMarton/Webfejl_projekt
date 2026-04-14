@@ -1,38 +1,29 @@
 import express from 'express';
 import cors from 'cors';
 import session from 'express-session';
+import { MemoryStore } from 'express-session';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import sessionStorage from "./src/utils/session_storage.js"
-import 'dotenv/config'; 
-
-import authRoutes from './src/routes/authRoutes.js';
-import projectRoutes from './src/routes/projectRoutes.js';
-import issueRoutes from './src/routes/issueRoutes.js';
-import commentRoutes from './src/routes/commentRoutes.js';
-import labelRoutes from './src/routes/labelRoutes.js';
-import backendRoutes from './src/routes/backendRoutes.js';
-import userRoutes from './src/routes/userRoutes.js';
 
 import { errorHandler } from './src/middleware/errorHandler.js';
 
-import db from './src/services/DatabaseService.js';
+import authRoutes from './src/routes/authRoutes.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5173';
 const isProduction = process.env.NODE_ENV === 'production';
 
-const storage = new sessionStorage();
+const storage = new MemoryStore();
 
+app.use(express.json());
 app.use(cors({ 
   origin: FRONTEND_URL, 
   credentials: true 
 }));
-app.use(express.json());
 
 app.use(session({
   name: process.env.SESSION_NAME || 'sid',
@@ -45,16 +36,19 @@ app.use(session({
     httpOnly: true,
     secure: false,
     sameSite: 'lax',
+    maxAge: 30 * 60 * 1000
   }
-}));
+})); 
 
 app.use('/api/auth', authRoutes);
-app.use('/api/projects', projectRoutes);
-app.use('/api/issues', issueRoutes);
-app.use('/api/comments', commentRoutes);
-app.use('/api/labels', labelRoutes);
-app.use('/api/server', backendRoutes);
-app.use('/api/user', userRoutes);
+
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'Backend is running', 
+    timestamp: new Date().toISOString(),
+    version: '1.0.0'
+  });
+});
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
@@ -64,8 +58,6 @@ app.use(errorHandler);
 
 async function startServer() {
   try {
-    await db.initialize();
-    
     app.listen(PORT, () => {
       console.log(`\nBackend server started successfully!`);
       console.log(`Server running on http://localhost:${PORT}`);

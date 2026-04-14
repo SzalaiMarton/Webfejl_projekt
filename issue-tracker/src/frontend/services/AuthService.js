@@ -9,8 +9,8 @@ class AuthService {
       });
 
       if (response.user) {
-        localStorage.setItem('user', JSON.stringify(response.user));
-        localStorage.setItem('token', 'authenticated');
+        localStorage.setItem('userId', JSON.stringify(response.user.id));
+        localStorage.setItem('expiresAt', response.expiresAt);
         window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: true, user: response.user } }));
       }
 
@@ -39,8 +39,7 @@ class AuthService {
       const response = await ApiService.get('/auth/me');
       return response.user;
     } catch (error) {
-      localStorage.removeItem('user');
-      localStorage.removeItem('token');
+      localStorage.removeItem('userId');
       window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: false, user: null } }));
       return null;
     }
@@ -48,18 +47,21 @@ class AuthService {
 
   static logout() {
     ApiService.post('/auth/logout').catch(() => {});
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
+    localStorage.removeItem('userId');
     window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: false, user: null } }));
   }
 
   static getCurrentUserFromStorage() {
-    const user = localStorage.getItem('user');
+    const user = localStorage.getItem('userId');
     return user ? JSON.parse(user) : null;
   }
 
   static isAuthenticated() {
-    return !!localStorage.getItem('token');
+    if (!localStorage.getItem('userId')) {
+      return false;
+    }
+    const expiresAt = localStorage.getItem('expiresAt');
+    return expiresAt - Date.now() > 0;
   }
 }
 

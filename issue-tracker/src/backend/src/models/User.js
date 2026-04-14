@@ -12,6 +12,7 @@ export class User {
     this.assignedProjects = [];
     this.createdIssues = [];
     this.assignedIssues = [];
+    this.createdComments = [];
   }
 
   toJSON() {
@@ -20,6 +21,14 @@ export class User {
   }
 
   static fromJSON(data) {
-    return new User(data.id, data.username, data.email, data.password, data.role, data.avatar);
+    const user = new User(data.id, data.username, data.email, data.password, data.role, data.avatar);
+    user.createdAt = data.createdAt || user.createdAt;
+    user.updatedAt = data.updatedAt || user.updatedAt;
+    user.createdProjects = data.createdProjects || [];
+    user.assignedProjects = data.assignedProjects || [];
+    user.createdIssues = data.createdIssues || [];
+    user.assignedIssues = data.assignedIssues || [];
+    user.createdComments = data.createdComments || [];
+    return user;
   }
 }

@@ -8,17 +8,19 @@ import TitleBar from "../components/TitleBar.jsx";
 
 function LoginPage() {
   const navigate = useNavigate();
-  
+  const formId = "login-form";
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isEmailValid, setIsEmailValid] = useState(false);
   const [isPasswordValid, setIsPasswordValid] = useState(false);
   const [isErrorOpen, setIsErrorOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("Login failed");
-  const [isSucLoginOpen, setIsSucLoginOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const verifyEmail = (value) => {
+    if (value.length === 0) { return []; }
+    
     const errors = [];
     if (!value.includes('@')) {
       errors.push("Please enter a valid email");
@@ -28,6 +30,8 @@ function LoginPage() {
   };
 
   const verifyPassword = (value) => {
+    if (value.length === 0) { return []; }
+    
     const errors = [];
     if (value.length < 1) {
       errors.push("Password is required");
@@ -46,7 +50,6 @@ function LoginPage() {
     setIsLoading(true);
     try {
       await AuthService.login(email, password);
-      setIsSucLoginOpen(true);
       
       navigate("/dashboard");
       /*setTimeout(() => {
@@ -79,41 +82,48 @@ function LoginPage() {
         title={"Success!"}
       />*/}
       <div className="form-container">
-        <div>
+        <form id={formId}>
           <h2>Login</h2>
           <p>Please log in to access your account.</p>
           <div className="form-container-field">
             <TitleBar
+              id={formId}
               title={"Email:"}
               isRequired={true}
             />
             <InputField 
+              id={formId+"-email"}
               placeholderText="Enter email"
-              input={(value) => setEmail(value)}
+              textValue={(value) => setEmail(value)}
               verify={verifyEmail}
               disabled={isLoading}
               isRequired={true}
+              errorsEnabled={true}
             />
           </div>
           <div className="form-container-field">
             <TitleBar
+              id={formId}
               title={"Password:"}
               isRequired={true}
             />
             <InputField 
+              id={formId+"-password"}
               placeholderText="Enter password"
-              input={(value) => setPassword(value)}
+              textValue={(value) => setPassword(value)}
               verify={verifyPassword}
               disabled={isLoading}
               isRequired={true}
               type="password"
+              errorsEnabled={false}
             />
           </div>
           <div>
             <CustomButton 
-              onClick={handleLogin} 
+              id={formId}
               disabled={isLoading}
               text={"Login"}
+              onClick={handleLogin}
             />
           </div>
           {isLoading && <p style={{ textAlign: "center" }}>Logging in...</p>}
@@ -133,7 +143,7 @@ function LoginPage() {
               </a>
             </p>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );

@@ -51,6 +51,30 @@ router.post('/', requireSessionAuth, asyncHandler(async (req, res) => {
   }
 }));
 
+router.post('/:id/assign-user', requireSessionAuth, asyncHandler(async (req, res) => {
+  const { userId } = req.body;
+  if (!userId) return res.status(400).json({ error: 'User ID is required' });
+
+  try {
+    const assigned = await ProjectService.assignUserToProject(req.params.id, userId, req.userId);
+    res.json({ message: 'User assigned to project', user: assigned });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}));
+
+router.delete('/:id/assign-user', requireSessionAuth, asyncHandler(async (req, res) => {
+  const { userId } = req.body;
+  if (!userId) return res.status(400).json({ error: 'User ID is required' });
+
+  try {
+    const updated = await ProjectService.removeUserFromProject(req.params.id, userId, req.userId);
+    res.json({ message: 'User removed from project', user: updated });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}));
+
 router.patch('/:id', requireSessionAuth, asyncHandler(async (req, res) => {
   try {
     const project = ProjectService.getProjectById(req.params.id);

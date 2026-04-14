@@ -1,4 +1,4 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import AuthService from "../services/AuthService.js";
 
@@ -6,15 +6,28 @@ import '../styles/tokens.css'
 import '../styles/design.css'
 import '../styles/layout.css'
 import CustomButton from "./CustomButton.jsx";
+import ApiService from "../services/ApiService.js";
 
 function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
 
-  const checkAuthState = () => {
+  const isLoginPage = location.pathname === "/login";
+
+  async function checkAuthState() {
     if (AuthService.isAuthenticated()) {
-      const storedUser = AuthService.getCurrentUserFromStorage();
+      const storedUserId = AuthService.getCurrentUserFromStorage();
+      let storedUser = null;
+
+      try {
+        storedUser = await ApiService.get(`/user/get/${storedUserId}`);
+      } catch (error) {
+        console.log("Error during user fetching.", error.message);
+        return;
+      }
+
       if (storedUser) {
         setIsAuthenticated(true);
         setUser(storedUser);
@@ -62,11 +75,11 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-        {isAuthenticated && (
+        {!isLoginPage && isAuthenticated && (
         <div className="navbar-brand-logged-in">
           <h1>IssueTracker</h1>
           <div className="navbar-user">
-            <p2>Welcome, {user.username}</p2>
+            <h4>Welcome, {user.username}</h4>
             <CustomButton
               onClick={handleLogout}
               text={"Logout"}
@@ -76,14 +89,14 @@ function Navbar() {
           </div>
         </div>
 
-      )}
-      {!isAuthenticated && (
+        )}
+        {(!isAuthenticated || isLoginPage) && (
         <div className="navbar-brand-logged-out">
           <h1>IssueTracker</h1>
         </div>
       )}
       <ul className="navbar-links">
-        {isAuthenticated && (
+          {!isLoginPage && isAuthenticated && (
           <>
             <div className="navbar-inner-links">
               <li>
@@ -109,7 +122,7 @@ function Navbar() {
             </div>
           </>
         )}
-        {!isAuthenticated && (
+          {(isLoginPage || !isAuthenticated) && (
           <li>
             <NavLink to="/login" className={({ isActive }) => (isActive ? "active" : "")}>
               Login

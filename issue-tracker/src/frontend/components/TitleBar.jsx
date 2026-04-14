@@ -1,9 +1,9 @@
 import RequiredFieldText from "../components/RequiredFieldText";
 
-function TitleBar({title, isRequired}) {
+function TitleBar({id = "", title, isRequired}) {
     return (
         <div className="titlebar">
-              <label>{title}</label>
+              <label id={id}>{title}</label>
               {isRequired && (<RequiredFieldText/>)}
         </div>
     );

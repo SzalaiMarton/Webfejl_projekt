@@ -8,7 +8,8 @@ import TitleBar from "../components/TitleBar.jsx";
 
 function RegisterPage() {
   const navigate = useNavigate();
-  
+  const formId = "register-form";
+
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,15 +26,19 @@ function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const verifyUsername = (value) => {
+    if (value.length === 0) {return [];}
+    
     const errors = [];
     if (value.trim().length < 3) {
-      errors.push("Username must be at least 3 characters");
+      errors.push("Must be at least 3 characters");
     }
     setIsUsernameValid(errors.length === 0 && value.trim().length > 0);
     return errors;
   };
 
   const verifyEmail = (value) => {
+    if (value.length === 0) {return [];}
+
     const errors = [];
     if (!value.includes('@')) {
       errors.push("Please enter a valid email");
@@ -43,6 +48,8 @@ function RegisterPage() {
   };
 
   const verifyPassword = (value) => {
+    if (value.length === 0) {return [];}
+    
     const errors = [];
     if (value.length < 8) errors.push("At least 8 characters");
     if (!/[A-Z]/.test(value)) errors.push("At least one uppercase letter");
@@ -54,6 +61,8 @@ function RegisterPage() {
   };
 
   const verifyConfirmPassword = (value) => {
+    if (value.length === 0) {return [];}
+    
     const errors = [];
     if (value !== password) {
       errors.push("Password doesn't match");
@@ -110,12 +119,14 @@ function RegisterPage() {
           
           <div className="form-container-field">
             <TitleBar
+              id={formId}
               title={"Username:"}
               isRequired={true}
             />
             <InputField 
+              id={formId}
               placeholderText="Enter username"
-              input={(value) => setUsername(value)}
+              textValue={(value) => setUsername(value)}
               verify={verifyUsername}
               disabled={isLoading}
               isRequired={true}
@@ -124,12 +135,14 @@ function RegisterPage() {
 
           <div className="form-container-field">
             <TitleBar
+              id={formId}
               title={"Email:"}
               isRequired={true}
             />
             <InputField 
+              id={formId}
               placeholderText="Enter email"
-              input={(value) => setEmail(value)}
+              textValue={(value) => setEmail(value)}
               verify={verifyEmail}
               disabled={isLoading}
               isRequired={true}
@@ -138,12 +151,14 @@ function RegisterPage() {
 
           <div className="form-container-field">
               <TitleBar
+                id={formId}
                 title={"Password:"}
                 isRequired={true}
               />
               <InputField 
+                id={formId}
                 placeholderText="Enter password"
-                input={(value) => setPassword(value)}
+                textValue={(value) => setPassword(value)}
                 verify={verifyPassword}
                 disabled={isLoading}
                 isRequired={true}
@@ -153,12 +168,14 @@ function RegisterPage() {
 
           <div className="form-container-field">
               <TitleBar
+                id={formId}
                 title={"Confirm Password:"}
                 isRequired={true}
               />
               <InputField 
+                id={formId}
                 placeholderText="Confirm password"
-                input={(value) => setConfirmPassword(value)}
+                textValue={(value) => setConfirmPassword(value)}
                 verify={verifyConfirmPassword}
                 disabled={isLoading}
                 isRequired={true}
@@ -168,6 +185,7 @@ function RegisterPage() {
 
           <div>
             <CustomButton 
+              id={formId}
               onClick={handleRegister} 
               disabled={isLoading}
               text={"Register"}

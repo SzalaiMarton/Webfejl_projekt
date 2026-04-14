@@ -36,6 +36,42 @@ class ProjectService {
     });
   }
 
+  async assignUserToProject(projectId, userId, byUserId) {
+    const project = db.getProjectById(projectId);
+    if (!project) throw new Error('Project not found');
+
+    // only project owner can assign other users
+    if (project.ownerId !== byUserId) {
+      throw new Error('Only project owner can assign users');
+    }
+
+    const user = db.getUserById(userId);
+    if (!user) throw new Error('User not found');
+
+    if ((user.assignedProjects || []).includes(projectId)) return user;
+
+    return await db.updateUser(userId, {
+      assignedProjects: [...(user.assignedProjects || []), projectId]
+    });
+  }
+
+  async removeUserFromProject(projectId, userId, byUserId) {
+    const project = db.getProjectById(projectId);
+    if (!project) throw new Error('Project not found');
+
+    // allow project owner to remove anyone, or the user themselves to remove self
+    if (project.ownerId !== byUserId && userId !== byUserId) {
+      throw new Error('Unauthorized');
+    }
+
+    const user = db.getUserById(userId);
+    if (!user) throw new Error('User not found');
+
+    return await db.updateUser(userId, {
+      assignedProjects: (user.assignedProjects || []).filter(pid => pid !== projectId)
+    });
+  }
+
   getAllProjects() {
     return db.getAllProjects();
   }
