@@ -50,11 +50,7 @@ function LoginPage() {
     setIsLoading(true);
     try {
       await AuthService.login(email, password);
-      
       navigate("/dashboard");
-      /*setTimeout(() => {
-        navigate("/dashboard");
-      }, 2000);*/
     } catch (error) {
       setErrorMessage("Login failed. Please try again.");
       setIsErrorOpen(true);
@@ -70,17 +66,8 @@ function LoginPage() {
         message={errorMessage}
         onClose={() => setIsErrorOpen(false)}
         innerClassName="error-card-message"
-        outerClassName="error-card-container"
         title={"Error!"}
       />
-      {/*<PopupCard 
-        isOpen={isSucLoginOpen}
-        message="Login successful!"
-        onClose={() => setIsSucLoginOpen(false)}
-        innerClassName="suc-login-card-message"
-        outerClassName="suc-login-card-container"
-        title={"Success!"}
-      />*/}
       <div className="form-container">
         <form id={formId}>
           <h2>Login</h2>
@@ -133,11 +120,7 @@ function LoginPage() {
               Don't have an account?{" "}
               <a 
                 href="/register" 
-                style={{ 
-                  color: "#007bff", 
-                  textDecoration: "none",
-                  cursor: "pointer"
-                }}
+                className="link-text"
               >
                 Register here
               </a>

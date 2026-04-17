@@ -1,6 +1,6 @@
 import Modal from "react-modal";
 
-const PopupCard = ({ message, isOpen, onClose, innerClassName, outerClassName, title }) => {
+const PopupCard = ({ message, isOpen, onClose, innerClassName, title, onConfirm, confirmText = 'Yes', cancelText = 'No' }) => {
   return (
     <Modal
       style={{
@@ -9,14 +9,23 @@ const PopupCard = ({ message, isOpen, onClose, innerClassName, outerClassName, t
       shouldCloseOnEsc={true}
       preventScroll={true}
       isOpen={isOpen}
-      className={outerClassName}
+      className="popup-card-container"
       ariaHideApp={false}
       onRequestClose={onClose}
     >
       <div className={innerClassName}>
         <h2>{title}</h2>
         <p>{message}</p>
-        <button onClick={onClose}>Close</button>
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+          {onConfirm ? (
+            <>
+              <button onClick={onConfirm}>{confirmText}</button>
+              <button onClick={onClose}>{cancelText}</button>
+            </>
+          ) : (
+            <button onClick={onClose}>Close</button>
+          )}
+        </div>
       </div>
     </Modal>
   );

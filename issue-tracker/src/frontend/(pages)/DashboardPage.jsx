@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import IssueService from "../services/IssueService.js";
 import ProjectService from "../services/ProjectService.js";
 import AuthService from "../services/AuthService.js";
@@ -28,13 +28,8 @@ function DashboardPage() {
     try {
       setIsLoading(true);
       
-      const currentUser = AuthService.getCurrentUserFromStorage();
-      setUser(currentUser);
-
-      const [projectsData, issuesData] = await Promise.all([
-        ProjectService.getAllProjects(),
-        IssueService.getAllIssues({ sortBy: "createdAt", sortOrder: "desc" }),
-      ]);
+      const projectsData = await ProjectService.getCurrentUserProjects();
+      const issuesData = await IssueService.getCurrentUserIssues({ sortBy: "createdAt", sortOrder: "desc" });
 
       setProjects(projectsData.slice(0, 3));
       setRecentIssues(issuesData.slice(0, 5));
@@ -47,72 +42,84 @@ function DashboardPage() {
 
   return (
     <div className="container">
-      <h2>Dashboard</h2>
-      <p>Welcome {user?.username || "to your Issue Tracker"}!</p>
-
+      <h2>Welcome Back!</h2>
       {isLoading ? (
         <p>Loading dashboard...</p>
       ) : (
-        <div className="grid">
-          <div className="card">
-            <h3>Recent Issues</h3>
+        (projects.length === 0 && recentIssues.length === 0) ? (
+          <div className="empty-dashboard">
+            <p>Nothing to show here.</p>
+            <p>
+              Get started here: <a 
+                href="/create-project"
+                className="link-text"
+              >
+                Create a project
+              </a>
+            </p>
+          </div>
+        ) : (
+        <div className="dashboard-container">
+          <div className="recent-issues-container">
+            {recentIssues.length > 0 ? <h3>Recent Issues</h3> : <></>}
             {recentIssues.length === 0 ? (
               <p>No recent issues to display.</p>
             ) : (
               <ul style={{ listStyle: "none", padding: 0 }}>
-                {recentIssues.map((issue) => (
+                {recentIssues.map((issue, idx) => (
                   <li
                     key={issue.id}
                     style={{
                       padding: "0.5rem 0",
-                      borderBottom: "1px solid #ccc",
                       cursor: "pointer",
                     }}
                     onClick={() => navigate(`/issues/${issue.id}`)}
                   >
-                    <strong>{issue.title}</strong>
+                    <strong>#{idx+1} {issue.title}</strong>
                     <br />
                     <small>
                       Priority: {issue.priority} | Status: {issue.status}
                     </small>
+                    <hr></hr>
                   </li>
                 ))}
               </ul>
             )}
           </div>
 
-          <div className="card">
-            <h3>Your Projects</h3>
+          <div className="your-projects-container">
+            {projects.length > 0 ? <h3>Your Projects</h3> : <></>}
             {projects.length === 0 ? (
-              <p>No projects to display.</p>
+              <></>
             ) : (
               <ul style={{ listStyle: "none", padding: 0 }}>
-                {projects.map((project) => (
+                {projects.map((project, idx) => (
                   <li
-                    key={project.id}
+                    key={project.project.id}
                     style={{
                       padding: "0.5rem 0",
-                      borderBottom: "1px solid #ccc",
                       cursor: "pointer",
                     }}
-                    onClick={() => navigate(`/projects/${project.id}`)}
+                    onClick={() => navigate(`/projects/${project.project.id}`)}
                   >
-                    <strong>{project.name}</strong>
+                    <strong>#{idx+1} {project.project.name}</strong>
                     <br />
-                    <small>{project.description}</small>
+                    <small>{project.project.description}</small>
+                    <hr></hr>
                   </li>
                 ))}
               </ul>
             )}
           </div>
 
-          <div className="card">
+          <div className="statistics-container">
             <h3>Statistics</h3>
             <p>Total Issues: {recentIssues.length}</p>
             <p>Total Projects: {projects.length}</p>
-            <p>Status: Active</p>
+            <p>Status: <span>Active</span></p>
           </div>
         </div>
+        )
       )}
     </div>
   );

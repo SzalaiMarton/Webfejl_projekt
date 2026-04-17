@@ -1,3 +1,12 @@
+html {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar {
+  display: none;
+}
+
 body {
     display: flex;
     padding: var(--space-small);
@@ -44,7 +53,7 @@ select {
     justify-content: space-between;
 }
 
-.error-card-container {
+.popup-card-container {
     position: fixed;
     display: flex;
     justify-self: center;
@@ -60,7 +69,7 @@ select {
     height: var(--error-card-height);
 }
 
-.suc-login-card-container {
+.popup-card-container {
     position: fixed;
     display: flex;
     justify-self: center;
@@ -107,6 +116,8 @@ select {
     border-radius: var(--radius-large);
     padding: var(--space-large);
     padding-bottom: var(--space-large);
+    max-width: var(--max-width-container);
+    margin: auto;
 }
 
 .navbar {
@@ -115,6 +126,9 @@ select {
     margin-bottom: var(--gap-medium);
     border-radius: var(--radius-medium);
     gap: var(--space-medium);
+    margin-left: auto;
+    margin-right: auto;
+    max-width: var(--max-width-navbar);
 }
 
 .navbar-links button {
@@ -191,11 +205,142 @@ select {
     margin-bottom: var(--space-medium);
 }
 .card {
+    padding-left: var(--space-medium);
+    padding-right: var(--space-medium);
+    padding-bottom: var(--space-medium);
+}
+
+.dashboard-container {
     padding: var(--space-medium);
 }
 
-.card h3 {
+.issue-data {
+    padding: var(--space-small);
+    width: 160px;
+}
+.recent-issues-container {
+
+}
+
+.your-projects-container {
+
+}
+
+.statistics-container {
+
+}
+
+.project-card {
+    padding: var(--space-medium);
+    display: flex;
+    flex-direction: column;
+}
+
+.project-card h3 {
     margin-top: 0;
+}
+
+.project-card-header {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.issue-details-right {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.utils {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.util-desc {
+    flex: 1;
+    min-width: 0px;
+}
+
+.util-desc p {
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.post-button {
+    width: 150px;
+}
+
+.issue-details-left {
+
+}
+
+.util-buttons {
+    display: flex;
+    flex-shrink: 0px;
+    flex-direction: column;
+    padding-bottom: var(--space-medium);
+    padding-left: var(--space-medium);
+    padding-right: var(--space-medium);
+    width: 140px;
+}
+
+.util-buttons button {
+    margin-bottom: var(--space-small);
+}
+
+.comment-card {
+    padding: 1rem;
+    border-left: 3px solid #080303;
+    margin-bottom: 1rem;
+}
+
+.textarea-compose {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.project-details-issues {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-small);
+}
+
+.post-button {
+    padding: 0.5rem 1rem;
+}
+
+.comment-delete-btn {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.5rem;
+}
+
+.search-wrapper {
+    margin-bottom: 1rem;
+}
+
+.search-input {
+    padding: 0.5rem;
+    width: 100%;
+    max-width: 400px;
+}
+
+.error-banner {
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.back-button {
+    margin-bottom: var(--space-medium);
+}
+
+.project-details-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .grid {
@@ -243,9 +388,6 @@ select {
     display: grid;
     width: 100%;
 }
-
-
-
 
 .create-project-form {
     display: flex;
@@ -312,7 +454,17 @@ select {
     margin-top: var(--space-small);
 }
 
-@media (max-width: 550px) {
+@media (max-width: 620px) {
+    .navbar-inner-links {
+        list-style: none;
+        gap: 1px;
+    }
+
+    .navbar-brand-logged-in {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
     .navbar-links a {
         padding: var(--space-small) var(--space-medium);
         border-radius: var(--radius-medium);

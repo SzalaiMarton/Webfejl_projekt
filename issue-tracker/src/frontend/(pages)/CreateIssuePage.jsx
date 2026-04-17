@@ -1,13 +1,14 @@
 import AutoResizeTextarea from "../components/AutoResizeTextarea";
 import PopupCard from "../components/PopupCard";
 import { useState, useEffect } from "react";
-import RequiredField from "../components/RequiredField";
+import InputField from "../components/InputField";
 import { useNavigate } from "react-router-dom";
 import ProjectService from "../services/ProjectService.js";
 import IssueService from "../services/IssueService.js";
 import AuthService from "../services/AuthService.js";
 import TitleBar from "../components/TitleBar.jsx";
 import { useStore } from "../services/StoreContext.jsx";
+import CustomButton from "../components/CustomButton.jsx";
 
 function CreateIssuePage() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ function CreateIssuePage() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("medium");
-  const [isTitleValid, setIsTitleValid] = useState(false);
+  
   const [isErrorOpen, setIsErrorOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
@@ -36,7 +37,8 @@ function CreateIssuePage() {
 
   const loadProjects = async () => {
     try {
-      const data = await ProjectService.getAllProjects();
+      const data = await ProjectService.getCurrentUserProjects();
+      
       setProjects(data);
       if (data.length > 0) {
         setSelectedProjectId(data[0].id);
@@ -50,11 +52,22 @@ function CreateIssuePage() {
   };
 
   const handleCreateIssue = async () => {
-    if (!isTitleValid || !selectedProjectId) {
-      setErrorMessage("Please fill in title and select a project");
+    if ((!title || title.trim().length === 0) && !selectedProjectId) {
+      setErrorMessage("Please fill in the title and select a project.");
       setIsErrorOpen(true);
       return;
     }
+    else if (!title || title.trim().length === 0) {
+      setErrorMessage("Please fill in the title.");
+      setIsErrorOpen(true);
+      return;
+    }
+    else if (!selectedProjectId) {
+      setErrorMessage("Please select a project.");
+      setIsErrorOpen(true);
+      return;
+    }
+
 
     setIsLoading(true);
     try {
@@ -65,7 +78,6 @@ function CreateIssuePage() {
         priority
       );
 
-      // optimistic update to store
       dispatch({ type: 'ADD_ISSUE', payload: {
         id: 'temp-' + Date.now(),
         projectId: selectedProjectId,
@@ -129,8 +141,8 @@ function CreateIssuePage() {
             >
               <option value="">Select a project</option>
               {projects.map((project) => (
-                <option key={project.id} value={project.id}>
-                  {project.name}
+                <option key={project.project.id} value={project.project.id}>
+                  {project.project.name}
                 </option>
               ))}
             </select>
@@ -141,13 +153,11 @@ function CreateIssuePage() {
               title={"Title:"}
               isRequired={true}
             />
-            <RequiredField 
-              required={true} 
+            <InputField
+              isRequired={true}
               type="text"
-              placeholder="Issue title"
-              isValid={(isValid) => setIsTitleValid(isValid)}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              placeholderText="Issue title"
+              textValue={(v) => setTitle(v)}
               disabled={isLoading}
             />
           </div>
@@ -183,14 +193,12 @@ function CreateIssuePage() {
               <option value="critical">Critical</option>
             </select>
           </div>
-
-          <button 
-            className="create-issue-form-create-button" 
+          <CustomButton
+            className="create-issue-form-create-button"
             onClick={handleCreateIssue}
             disabled={isLoading}
-          >
-            {isLoading ? "Creating..." : "Create Issue"}
-          </button>
+            text={isLoading ? "Creating..." : "Create Issue"}
+          />
         </div>
       </div>
     </div>

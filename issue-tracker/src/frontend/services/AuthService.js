@@ -1,19 +1,29 @@
 import ApiService from './ApiService.js';
 
 class AuthService {
+  static removeSession() {
+    localStorage.removeItem('userId');
+    window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: false, user: null } }));
+  }
+
+  static createSession(response) {
+    localStorage.setItem('userId', JSON.stringify(response.user.id));
+    localStorage.setItem('expiresAt', response.expiresAt);
+    window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: true, user: response.user } }));
+  }
+
   static async login(email, password) {
     try {
       const response = await ApiService.post('/auth/login', {
         email,
-        password,
+        password
       });
 
-      if (response.user) {
-        localStorage.setItem('userId', JSON.stringify(response.user.id));
-        localStorage.setItem('expiresAt', response.expiresAt);
-        window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: true, user: response.user } }));
+      if (!response.user) {
+        throw new Error("User not found.");
       }
 
+        AuthService.createSession(response);
       return response;
     } catch (error) {
       throw error;
@@ -39,19 +49,17 @@ class AuthService {
       const response = await ApiService.get('/auth/me');
       return response.user;
     } catch (error) {
-      localStorage.removeItem('userId');
-      window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: false, user: null } }));
+        AuthService.removeSession();
       return null;
     }
   }
 
   static logout() {
     ApiService.post('/auth/logout').catch(() => {});
-    localStorage.removeItem('userId');
-    window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: false, user: null } }));
+      AuthService.removeSession();
   }
 
-  static getCurrentUserFromStorage() {
+  static getCurrentUserIdFromStorage() {
     const user = localStorage.getItem('userId');
     return user ? JSON.parse(user) : null;
   }

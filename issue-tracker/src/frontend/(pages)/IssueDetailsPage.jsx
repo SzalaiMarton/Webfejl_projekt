@@ -3,6 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import IssueService from "../services/IssueService.js";
 import CommentService from "../services/CommentService.js";
 import AuthService from "../services/AuthService.js";
+import CustomButton from "../components/CustomButton.jsx";
+import AutoResizeTextarea from "../components/AutoResizeTextarea.jsx";
+import PopupCard from "../components/PopupCard.jsx";
 
 function IssueDetailsPage() {
   const { id } = useParams();
@@ -13,6 +16,8 @@ function IssueDetailsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isPosting, setIsPosting] = useState(false);
+  const [isErrorOpen, setIsErrorOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (!AuthService.isAuthenticated()) {
@@ -22,6 +27,12 @@ function IssueDetailsPage() {
 
     loadIssue();
   }, [id, navigate]);
+
+  useEffect(() => {
+    if (!isLoading && !issue) {
+      navigate('/not-found', { replace: true });
+    }
+  }, [isLoading, issue, navigate]);
 
   const loadIssue = async () => {
     try {
@@ -50,7 +61,8 @@ function IssueDetailsPage() {
       setComments([...comments, comment]);
       setNewComment("");
     } catch (err) {
-      alert("Error adding comment: " + err.message);
+      setErrorMessage("Error adding comment: " + err.message);
+      setIsErrorOpen(true);
     } finally {
       setIsPosting(false);
     }
@@ -63,7 +75,8 @@ function IssueDetailsPage() {
       await CommentService.deleteComment(commentId);
       setComments(comments.filter(c => c.id !== commentId));
     } catch (err) {
-      alert("Error deleting comment: " + err.message);
+      setErrorMessage("Error deleting comment: " + err.message);
+      setIsErrorOpen(true);
     }
   };
 
@@ -74,80 +87,109 @@ function IssueDetailsPage() {
       await IssueService.deleteIssue(id);
       navigate("/projects");
     } catch (err) {
-      alert("Error deleting issue: " + err.message);
+      setErrorMessage("Error deleting issue: " + err.message);
+      setIsErrorOpen(true);
     }
   };
 
   if (isLoading) return <div className="container"><h2>Loading...</h2></div>;
   if (error) return <div className="container"><h2>Error: {error}</h2></div>;
-  if (!issue) return <div className="container"><h2>Issue not found</h2></div>;
 
   return (
     <div className="container">
-      <h2>{issue.title}</h2>
-      <p>{issue.description}</p>
+      <PopupCard
+        isOpen={isErrorOpen}
+        message={errorMessage}
+        onClose={() => setIsErrorOpen(false)}
+        innerClassName="error-card-message"
+        outerClassName="error-card-container"
+        title={"Error!"}
+      />
+      <CustomButton
+        onClick={() => navigate(-1)}
+        className={"back-button"}
+        text={"◀ Back"}
+        type="button"
+      />
       
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "2rem" }}>
-        <div>
-          <p><strong>Priority:</strong> {issue.priority}</p>
-          <p><strong>Status:</strong> {issue.status}</p>
-          <p><strong>Created:</strong> {new Date(issue.createdAt).toLocaleDateString()}</p>
+      
+      <hr></hr>
+
+      <div className="utils">
+        <div className="issue-details-left">
+          <h2>{issue.title}</h2>
+          <div className="util-desc">
+            {issue.description.length > 0 ? 
+            (<p>{issue.description}</p>) : 
+            (<p>No description provided.</p>)
+            }
+          </div>
+          <div>
+            {issue.assignedToId && <p><strong>Assigned to:</strong> {issue.assignedToId}</p>}
+            {issue.labels && issue.labels.length > 0 && (
+              <p><strong>Labels:</strong> {issue.labels.join(", ")}</p>
+            )}
+          </div>
         </div>
-        <div>
-          {issue.assignedToId && <p><strong>Assigned to:</strong> {issue.assignedToId}</p>}
-          {issue.labels && issue.labels.length > 0 && (
-            <p><strong>Labels:</strong> {issue.labels.join(", ")}</p>
-          )}
+        <div className="issue-details-right">
+          <div className="issue-data">
+            <p><strong>Priority:</strong> {issue.priority}</p>
+            <p><strong>Status:</strong> {issue.status}</p>
+            <p><strong>Created:</strong> {new Date(issue.createdAt).toLocaleDateString()}</p>
+          </div>
+          <div className="util-buttons">
+            <h4>Options:</h4>
+            <CustomButton
+              onClick={() => navigate(`/issues/${id}/edit`)}
+              className={"edit-button"}
+              text={"Edit Issue"}
+            />
+            <CustomButton
+              onClick={handleDeleteIssue}
+              className={"delete-button"}
+              text={"Delete Issue"}
+            />
+          </div>
         </div>
       </div>
 
-      <button onClick={handleDeleteIssue} style={{ marginBottom: "2rem", padding: "0.5rem 1rem", backgroundColor: "#fee", color: "#c00" }}>
-        Delete Issue
-      </button>
-      <div style={{ marginBottom: '2rem' }}>
-        <button onClick={() => navigate(`/issues/${id}/edit`)} style={{ marginRight: '0.5rem' }}>
-          Edit Issue
-        </button>
-      </div>
-
+      <hr></hr>
+      
       <h3>Comments ({comments.length})</h3>
-      
       {comments.length === 0 ? (
         <p>No comments yet. Be the first to comment!</p>
       ) : (
         <div style={{ marginBottom: "2rem" }}>
           {comments.map((comment) => (
-            <div key={comment.id} style={{ padding: "1rem", borderLeft: "3px solid #ddd", marginBottom: "1rem" }}>
+            <div key={comment.id} className="comment-card">
               <p><strong>{comment.authorId}</strong> - {new Date(comment.createdAt).toLocaleString()}</p>
               <p>{comment.content}</p>
-              <button
+              <CustomButton
+                type="button"
                 onClick={() => handleDeleteComment(comment.id)}
-                style={{ fontSize: "0.8rem", padding: "0.25rem 0.5rem" }}
-              >
-                Delete
-              </button>
+                className={"comment-delete-btn"}
+                text={"Delete"}
+              />
             </div>
           ))}
         </div>
       )}
-
-      <div style={{ marginTop: "2rem", padding: "1rem", backgroundColor: "#f9f9f9", borderRadius: "4px" }}>
+      <div className="issue-details-comment-compose">
         <h4>Add Comment</h4>
-        <textarea
+        <AutoResizeTextarea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="Write your comment here..."
-          rows={4}
-          style={{ width: "100%", padding: "0.5rem", marginBottom: "0.5rem" }}
+          className={"textarea-compose"}
           disabled={isPosting}
         />
-        <button
+        <CustomButton
+          type="button"
           onClick={handleAddComment}
           disabled={isPosting || !newComment.trim()}
-          style={{ padding: "0.5rem 1rem" }}
-        >
-          {isPosting ? "Posting..." : "Post Comment"}
-        </button>
+          className={"post-button"}
+          text={isPosting ? "Posting..." : "Post Comment"}
+        />
       </div>
     </div>
   );

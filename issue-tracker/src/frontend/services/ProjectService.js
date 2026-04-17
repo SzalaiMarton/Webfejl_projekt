@@ -1,6 +1,26 @@
 import ApiService from './ApiService.js';
+import AuthService from './AuthService.js';
 
 class ProjectService {
+  static async getCurrentUserProjects() {
+    try {
+      const currentUser = await AuthService.getCurrentUser();
+      if (!currentUser) {
+        console.log("Failed to fetch current user's projects.");
+        return;
+      }
+
+      const dataIds = [...currentUser.createdProjects, ...currentUser.assignedProjects];
+      const data = await Promise.all(
+        dataIds.map((value) => ProjectService.getProjectById(value))
+      );
+      
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   static async getAllProjects() {
     try {
       const response = await ApiService.get('/projects');

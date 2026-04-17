@@ -78,10 +78,7 @@ class UserService {
       throw new Error('User not found');
     }
 
-    const ownedProjects = db.getProjectsByOwnerId(userId);
-    for (const project of ownedProjects) {
-      await db.deleteProject(project.id);
-    }
+    await db.removeProjectsByOwner(userId);
 
     await db.deleteUser(userId);
     return user.toJSON();

@@ -1,7 +1,7 @@
 import AutoResizeTextarea from "../components/AutoResizeTextarea.jsx";
 import PopupCard from "../components/PopupCard.jsx";
 import { useState, useEffect } from "react";
-import RequiredField from "../components/RequiredField.jsx";
+import InputField from "../components/InputField.jsx";
 import { useNavigate } from "react-router-dom";
 import AuthService from "../services/AuthService.js";
 import TitleBar from "../components/TitleBar.jsx";
@@ -18,7 +18,7 @@ function CreateProjectPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [isTitleValid, setIsTitleValid] = useState(false);
+  
   const { dispatch } = useStore();
 
   useEffect(() => {
@@ -29,45 +29,33 @@ function CreateProjectPage() {
   }, [navigate]);
 
   const handleCreateProject = async () => {
-    if (!isTitleValid) {
+    if (!title || title.trim().length === 0) {
       setErrorMessage("Please fill in title and select a project");
       setIsErrorOpen(true);
       return;
     }
 
     setIsLoading(true);
-    let currentUser = null;
 
     try {
-      currentUser = AuthService.getCurrentUserFromStorage();
-      if (!currentUser) {
-        currentUser = AuthService.getCurrentUser();
-      }
+      const currentUser = await AuthService.getCurrentUser();
       if (!currentUser) {
         throw new Error("UserID not found");
       }
-    }
-    catch (error) {
-      setErrorMessage("Something went wrong " + error);
-      setIsErrorOpen(true);
-      setIsLoading(false);
-      return;
-    }
-
-    try {
+      
       const project = await ProjectService.createProject(
         title,
         description
       );
 
       if (project) {
-        dispatch({ type: 'ADD_PROJECT', payload: project });
+        dispatch({ type: 'ADD_PROJECT', payload: { project, issues: [], labels: [] } });
       }
 
       setIsSuccessOpen(true);
       setTimeout(() => {
         navigate('/projects');
-      }, 700);
+      }, 1000);
     }
     catch (error) {
       setErrorMessage("Something went wrong " + error);
@@ -106,13 +94,11 @@ function CreateProjectPage() {
               title={"Title:"}
               isRequired={true}
             />
-            <RequiredField 
-              required={true} 
+            <InputField
+              isRequired={true}
               type="text"
-              placeholder="Project title"
-              isValid={(isValid) => setIsTitleValid(isValid)}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              placeholderText="Project title"
+              textValue={(v) => setTitle(v)}
               disabled={isLoading}
             />
           </div>

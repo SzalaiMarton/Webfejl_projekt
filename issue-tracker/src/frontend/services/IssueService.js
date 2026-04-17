@@ -1,6 +1,25 @@
 import ApiService from './ApiService.js';
+import AuthService from './AuthService.js';
 
 class IssueService {
+  static async getCurrentUserIssues() {
+    try {
+      const currentUser = await AuthService.getCurrentUser();
+      if (!currentUser) {
+        console.log("Failed to fetch current user's projects.");
+        return;
+      }
+
+      const dataIds = [...currentUser.createdIssues, ...currentUser.assignedIssues];
+      const data = await Promise.all(
+        dataIds.map((value) => IssueService.getIssueById(value))
+      );
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   static async getAllIssues(filters = {}) {
     try {
       const queryParams = new URLSearchParams();

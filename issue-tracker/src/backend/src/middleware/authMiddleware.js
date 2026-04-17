@@ -46,7 +46,6 @@ export function optionalAuth(req, res, next) {
 }
 
 export function requireSessionAuth(req, res, next) {
-  console.log(req.session)
   try {
     if (req.session && req.session.userId) {
       req.userId = req.session.userId;
@@ -57,20 +56,4 @@ export function requireSessionAuth(req, res, next) {
   } catch (error) {
     return res.status(401).json({ error: 'Authentication failed', status: 401 });
   }
-}
-
-function throttle(callback, delay) {
-  let lastCall = 0;
-  return (...args) => {
-    const now = Date.now();
-    if (now - lastCall >= delay) {
-      lastCall = now;
-      callback(...args);
-    }
-  };
-}
-
-export async function refreshSession() {
-  const res = await fetch("/api/auth/session/refresh", { method: "POST" });
-  if (!res.ok) handleSessionExpired();
 }

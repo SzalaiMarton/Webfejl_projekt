@@ -1,4 +1,4 @@
-function CustomButton({ id = "", type, disabled, onClick, className, text }) {
+function CustomButton({ id = "", type, disabled, onClick, className, text, style = undefined }) {
   return (
     <button
       id={id}
@@ -6,6 +6,7 @@ function CustomButton({ id = "", type, disabled, onClick, className, text }) {
       onClick={onClick}
       disabled={disabled}
       type={type}
+      style={style}
     >
       {text}
     </button>

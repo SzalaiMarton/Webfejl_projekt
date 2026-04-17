@@ -27,14 +27,24 @@ function ProjectsPage() {
       return;
     }
 
-    // load projects from backend (and populate store)
     fetchProjects();
   }, [navigate]);
 
   const fetchProjects = async () => {
     try {
       setIsLoading(true);
-      const data = await ProjectService.getAllProjects();
+      const user = await AuthService.getCurrentUser();
+      
+      if (!user) {
+        console.log("Error user not found.");
+        throw new Error("Error user not found.");
+      }
+
+      const dataIds = [...user.createdProjects, ...user.assignedProjects];
+      const data = await Promise.all(
+        dataIds.map((value) => ProjectService.getProjectById(value))
+      );
+
       dispatch({ type: 'SET_PROJECTS', payload: data });
       setProjects(data);
       setError(null);
@@ -56,12 +66,14 @@ function ProjectsPage() {
     const s = search.toLowerCase();
     return list.filter(p => (p.name || '').toLowerCase().includes(s) || (p.description || '').toLowerCase().includes(s));
   }
+
   return (
     <div className="container">
       <h2>Projects</h2>
       <p>Manage your projects here.</p>
-      <div style={{ marginBottom: '1rem' }}>
+      <div className="search-wrapper">
         <input
+          className="search-input"
           placeholder="Search projects..."
           value={search}
           onChange={(e) => {
@@ -72,12 +84,11 @@ function ProjectsPage() {
             const newSearch = params.toString() ? `?${params.toString()}` : '';
             navigate(`${location.pathname}${newSearch}`, { replace: true });
           }}
-          style={{ padding: '0.5rem', width: '100%', maxWidth: '400px' }}
         />
       </div>
       
       {error && (
-        <div style={{ padding: "1rem", backgroundColor: "#fee", color: "#c00", marginBottom: "1rem" }}>
+        <div className="error-banner">
           Error: {error}
         </div>
       )}
@@ -89,21 +100,18 @@ function ProjectsPage() {
       ) : (
         <div className="grid">
           {filteredProjects().map((project) => (
-            <div key={project.id} onClick={() => handleProjectClick(project.id)}>
-              <ProjectCard project={project} />
+            <div key={project.project.id}>
+              <ProjectCard
+                onClick={() => handleProjectClick(project.project.id)}
+                project={project}
+              />
             </div>
           ))}
         </div>
       ))}
     </div>
   );
-
-  function filteredProjects() {
-    const list = state.projects && state.projects.length ? state.projects : projects;
-    if (!search || search.trim() === '') return list;
-    const s = search.toLowerCase();
-    return list.filter(p => (p.name || '').toLowerCase().includes(s) || (p.description || '').toLowerCase().includes(s));
-  }
 }
+
 
 export default ProjectsPage;

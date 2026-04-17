@@ -8,10 +8,13 @@ export class User {
     this.avatar = avatar;
     this.createdAt = new Date().toISOString();
     this.updatedAt = new Date().toISOString();
+
     this.createdProjects = [];
     this.assignedProjects = [];
+
     this.createdIssues = [];
     this.assignedIssues = [];
+
     this.createdComments = [];
   }
 

@@ -10,37 +10,45 @@ class ProjectService {
     }
 
     const project = new Project(uuidv4(), name, description || '', ownerId);
-    return await db.createProject(project)
-    .then(
-      this.bindProjectToUser(project.id, ownerId).then(
-        () => {},
-        () => {throw new Error("Project failed to bind to user.")}
-      ), 
-      () => {throw new Error("Project failed to create.")}
-    );
+    try {
+      const created = await db.createProject(project);
+      const bound = await this.bindProjectToUser(project.id, ownerId);
+      if (!bound) {
+        await db.deleteProject(project.id);
+        throw new Error('Project failed to bind to user.');
+      }
+      return created;
+    } catch (err) {
+      throw err;
+    }
   }
 
   async bindProjectToUser(projectId, ownerId) {
-    let user = null;
     try {
-      user = UserService.getUserById(ownerId);
-      if (!user) { throw new Error("User not found."); }
-    }
-    catch (error) {
-      console.log(error);
+      const user = db.getUserById(ownerId);
+      if (!user) {
+        throw new Error('User not found');
+      }
+
+      const current = Array.isArray(user.createdProjects) ? user.createdProjects : [];
+      if (current.includes(projectId)) {
+        return user;
+      }
+
+      const updated = await db.updateUser(ownerId, {
+        createdProjects: [...current, projectId]
+      });
+      return updated;
+    } catch (error) {
+      console.error('bindProjectToUser error:', error.message || error);
       return null;
     }
-
-    return await db.updateUser(ownerId, {
-      createdProjects: [...user.createdProjects, projectId]
-    });
   }
 
   async assignUserToProject(projectId, userId, byUserId) {
     const project = db.getProjectById(projectId);
     if (!project) throw new Error('Project not found');
 
-    // only project owner can assign other users
     if (project.ownerId !== byUserId) {
       throw new Error('Only project owner can assign users');
     }
@@ -59,7 +67,6 @@ class ProjectService {
     const project = db.getProjectById(projectId);
     if (!project) throw new Error('Project not found');
 
-    // allow project owner to remove anyone, or the user themselves to remove self
     if (project.ownerId !== byUserId && userId !== byUserId) {
       throw new Error('Unauthorized');
     }
@@ -129,6 +136,22 @@ class ProjectService {
       throw new Error('Project not found');
     }
     return db.getLabelsByProjectId(projectId);
+  }
+
+  async addIssues(projectId, issues) {
+    const project = db.getProjectById(projectId);
+    if (!project) {
+      throw new Error('Project not found');
+    }
+    return await db.updateIssue(issues);
+  }
+
+  async addLabel(projectId, labels) {
+    const project = db.getProjectById(projectId);
+    if (!project) {
+      throw new Error('Project not found');
+    }
+    return await db.updateLabel(labels);
   }
 }
 

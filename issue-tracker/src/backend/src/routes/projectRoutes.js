@@ -30,10 +30,8 @@ router.get('/:id', asyncHandler(async (req, res) => {
   }
 }));
 
-router.post('/', requireSessionAuth, asyncHandler(async (req, res) => {
+router.post('/', requireSessionAuth,  asyncHandler(async (req, res) => {
   const { name, description } = req.body;
-
-  console.log(req)
 
   if (!name) {
     return res.status(400).json({ error: 'Project name is required' });

@@ -114,6 +114,23 @@ li {
     color: var(--color-text);
 }
 
+.project-card {
+    background-color: var(--color-bg-card);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-medium);
+    border: var(--border-thickness-thin) solid #e2e8f0;
+}
+
+.project-card h3 {
+    color: var(--color-text);
+}
+
+
+.project-card-member-count-text {
+    font-size: small;
+}
+
+
 .container {
     background-color: var(--color-bg-s);
     color: var(--color-text-p);
@@ -123,6 +140,65 @@ li {
     color: var(--color-text-s);
 }
 
+.issue-details-comment-compose  {
+    background-color: var(--color-bg-s); 
+}
+
+.delete-issue-button {
+    background-color: white;
+    color: var(--color-error);
+}
+
+.error-banner {
+    background-color: white;
+    color: var(--color-error);
+}
+
+.delete-button {
+    background-color: white;
+    color: var(--color-error);
+}
+
+.dashboard-container {
+    background-color: var(--color-bg-p);
+    border-radius: var(--radius-large);
+    border: var(--border-thickness-thin) solid white;
+}
+
+.recent-issues-container {
+
+}
+
+.your-projects-container {
+    display: lis;
+}
+
+.statistics-container {
+    
+}
+
+.util-buttons {
+    background-color: var(--color-bg-p);
+    border-radius: var(--radius-large);
+    border: var(--border-thickness-thin) solid white;
+}
+
+.issue-data {
+    background-color: var(--color-bg-p);
+    border: var(--border-thickness-thin) solid white;
+    border-radius: var(--radius-large);
+}
+
+.link-text {
+    color: var(--color-text-link);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.statistics-container span {
+    color: green;
+}
+
 /*-------------------------------------------------
                 ISSUE
 -------------------------------------------------*/
@@ -130,6 +206,10 @@ li {
 .create-issue-form-create-button {
     background-color: rgba(38, 140, 13);
     color: rgb(255, 255, 255);
+}
+
+.create-issue-form-priority label {
+    font-size: larger;
 }
 
 .create-issue-form-desc p {
@@ -187,8 +267,7 @@ li {
     font-size: larger;
 }
 
-.error-card-container {
-    background-color: rgba(154, 154, 154, 0.287);
+.popup-card-container {
     color: var(--color-text-p);
     font-weight:bold;
     border-radius: var(--radius-large);
@@ -197,12 +276,12 @@ li {
     opacity: 0;
 }
 
-.error-card-container.ReactModal__Content--after-open {
+.popup-card-container.ReactModal__Content--after-open {
   transform: translateY(0);
   opacity: 1;
 }
 
-.error-card-container.ReactModal__Content--before-close {
+.popup-card-container.ReactModal__Content--before-close {
   transform: translateY(-50px);
   opacity: 0;
 }
@@ -210,31 +289,13 @@ li {
 .error-card-message {
     background-color: var(--color-error);
     border-radius: var(--radius-medium);
+    border: var(--border-thickness-thick) solid white;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.suc-login-card-container {
-    background-color: rgba(154, 154, 154, 0.287);
-    color: var(--color-text-p);
-    font-weight:bold;
-    border-radius: var(--radius-large);
-    transition: opacity 0.2s ease-in-out;
-    transform: translateY(-50px);
-    opacity: 0;
-}
-
-.suc-login-card-container.ReactModal__Content--after-open {
-  transform: translateY(0);
-  opacity: 1;
-}
-
-.suc-login-card-container.ReactModal__Content--before-close {
-  transform: translateY(-50px);
-  opacity: 0;
 }
 
 .suc-login-card-message {
     border-radius: var(--radius-medium);
     background-color: var(--color-success);
+    border: var(--border-thickness-thick) solid white;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

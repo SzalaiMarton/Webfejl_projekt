@@ -3,6 +3,7 @@ import IssueService from '../services/IssueService.js';
 import db from '../services/DatabaseService.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 import { requireSessionAuth, optionalAuth } from '../middleware/authMiddleware.js';
+import ProjectService from '../services/ProjectService.js';
 
 const router = express.Router();
 
@@ -54,6 +55,8 @@ router.post('/', requireSessionAuth, asyncHandler(async (req, res) => {
       priority || 'medium',
       labels || []
     );
+
+    ProjectService.addIssues(projectId, [issue.id]);
 
     res.status(201).json({
       message: 'Issue created successfully',

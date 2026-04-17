@@ -7,6 +7,8 @@ export class Project {
     this.status = status; // 'active' | 'archived' | 'completed'
     this.createdAt = new Date().toISOString();
     this.updatedAt = new Date().toISOString();
+    this.issues = [];
+    this.labels = [];
   }
 
   static fromJSON(data) {

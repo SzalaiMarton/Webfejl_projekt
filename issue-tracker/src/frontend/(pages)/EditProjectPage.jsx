@@ -3,8 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import ProjectService from "../services/ProjectService.js";
 import AuthService from "../services/AuthService.js";
 import TitleBar from "../components/TitleBar.jsx";
-import RequiredField from "../components/RequiredField.jsx";
+import InputField from "../components/InputField.jsx";
 import AutoResizeTextarea from "../components/AutoResizeTextarea.jsx";
+import PopupCard from "../components/PopupCard.jsx";
+import CustomButton from "../components/CustomButton.jsx";
 
 function EditProjectPage() {
   const { id } = useParams();
@@ -14,7 +16,10 @@ function EditProjectPage() {
   const [description, setDescription] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [isTitleValid, setIsTitleValid] = useState(false);
+  const [isCancelOpen, setIsCancelOpen] = useState(false);
+  const [isErrorOpen, setIsErrorOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  
 
   useEffect(() => {
     if (!AuthService.isAuthenticated()) {
@@ -33,15 +38,17 @@ function EditProjectPage() {
       setTitle(resp.project.name || "");
       setDescription(resp.project.description || "");
     } catch (err) {
-      alert("Error loading project: " + err.message);
+      setErrorMessage("Error loading project: " + err.message);
+      setIsErrorOpen(true);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleSave = async () => {
-    if (!isTitleValid) {
-      alert('Please enter a valid title');
+    if (!title || title.trim().length === 0) {
+      setErrorMessage('Please enter a valid title');
+      setIsErrorOpen(true);
       return;
     }
 
@@ -50,7 +57,8 @@ function EditProjectPage() {
       await ProjectService.updateProject(id, { name: title, description });
       navigate(`/projects/${id}`);
     } catch (err) {
-      alert('Error updating project: ' + err.message);
+      setErrorMessage('Error updating project: ' + err.message);
+      setIsErrorOpen(true);
     } finally {
       setIsSaving(false);
     }
@@ -61,18 +69,24 @@ function EditProjectPage() {
 
   return (
     <div className="container">
+      <PopupCard
+        isOpen={isErrorOpen}
+        message={errorMessage}
+        onClose={() => setIsErrorOpen(false)}
+        innerClassName="error-card-message"
+        outerClassName="error-card-container"
+        title={"Error!"}
+      />
       <h2>Edit Project</h2>
       <div className="create-project-form">
         <div>
           <div className="create-project-form-title">
             <TitleBar title={"Title:"} isRequired={true} />
-            <RequiredField
-              required={true}
+            <InputField
+              isRequired={true}
               type="text"
-              placeholder="Project title"
-              isValid={(isValid) => setIsTitleValid(isValid)}
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              placeholderText="Project title"
+              textValue={(v) => setTitle(v)}
               disabled={isSaving}
             />
           </div>
@@ -89,9 +103,29 @@ function EditProjectPage() {
             <p>Maximum character length: 800</p>
           </div>
 
-          <button onClick={handleSave} disabled={isSaving} className="create-project-form-create-button">
-            {isSaving ? 'Saving...' : 'Save Project'}
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <CustomButton
+              className={"cancel-button"}
+              onClick={() => setIsCancelOpen(true)}
+              disabled={isSaving}
+              text={"Cancel"}
+              type="button"
+            />
+            <button onClick={handleSave} disabled={isSaving} className="create-project-form-create-button">
+              {isSaving ? 'Saving...' : 'Save Project'}
+            </button>
+          </div>
+          <PopupCard
+            isOpen={isCancelOpen}
+            message={"Discard changes and go back?"}
+            title={"Confirm"}
+            onClose={() => setIsCancelOpen(false)}
+            onConfirm={() => { setIsCancelOpen(false); navigate(`/projects/${id}`); }}
+            innerClassName="confirm-card-message"
+            outerClassName="confirm-card-container"
+            confirmText="Discard"
+            cancelText="Keep Editing"
+          />
         </div>
       </div>
     </div>

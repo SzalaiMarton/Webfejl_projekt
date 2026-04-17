@@ -18,7 +18,7 @@ function Navbar() {
 
   async function checkAuthState() {
     if (AuthService.isAuthenticated()) {
-      const storedUserId = AuthService.getCurrentUserFromStorage();
+      const storedUserId = AuthService.getCurrentUserIdFromStorage();
       let storedUser = null;
 
       try {
@@ -79,7 +79,7 @@ function Navbar() {
         <div className="navbar-brand-logged-in">
           <h1>IssueTracker</h1>
           <div className="navbar-user">
-            <h4>Welcome, {user.username}</h4>
+            <h4>{user.username}</h4>
             <CustomButton
               onClick={handleLogout}
               text={"Logout"}

@@ -18,10 +18,11 @@
     --color-text-p: #E6EDF3;
     --color-text-s: #d9eaea;
     --color-text-disabled: #6B7280;
+    --color-text-link: #007bff;
 
     --color-success: #22C55E;
     --color-warning: #F59E0B;
-    --color-error: #b73636;
+    --color-error: #a40e0e;
     --color-info: #06B6D4;
     
     --color-button: #2657a7;
@@ -79,4 +80,7 @@
 
     --error-card-width: 500px;
     --error-card-height: 200px;
+
+    --max-width-container: 1200px;
+    --max-width-navbar: 1240px;
 }

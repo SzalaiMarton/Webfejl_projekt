@@ -3,9 +3,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import IssueService from "../services/IssueService.js";
 import AuthService from "../services/AuthService.js";
 import TitleBar from "../components/TitleBar.jsx";
-import RequiredField from "../components/RequiredField.jsx";
+import InputField from "../components/InputField.jsx";
 import AutoResizeTextarea from "../components/AutoResizeTextarea.jsx";
 import ProjectService from "../services/ProjectService.js";
+import PopupCard from "../components/PopupCard.jsx";
+import CustomButton from "../components/CustomButton.jsx";
 
 function EditIssuePage() {
   const { id } = useParams();
@@ -18,7 +20,9 @@ function EditIssuePage() {
   const [selectedProjectId, setSelectedProjectId] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [isTitleValid, setIsTitleValid] = useState(false);
+  const [isCancelOpen, setIsCancelOpen] = useState(false);
+  const [isErrorOpen, setIsErrorOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     if (!AuthService.isAuthenticated()) {
@@ -44,15 +48,17 @@ function EditIssuePage() {
       setSelectedProjectId(issueData.projectId || '');
       setProjects(projectList);
     } catch (err) {
-      alert('Error loading issue: ' + err.message);
+      setErrorMessage('Error loading issue: ' + err.message);
+      setIsErrorOpen(true);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleSave = async () => {
-    if (!isTitleValid) {
-      alert('Please enter a valid title');
+    if (!title || title.trim().length === 0) {
+      setErrorMessage('Please enter a valid title');
+      setIsErrorOpen(true);
       return;
     }
 
@@ -66,7 +72,8 @@ function EditIssuePage() {
       });
       navigate(`/issues/${id}`);
     } catch (err) {
-      alert('Error saving issue: ' + err.message);
+      setErrorMessage('Error saving issue: ' + err.message);
+      setIsErrorOpen(true);
     } finally {
       setIsSaving(false);
     }
@@ -77,7 +84,18 @@ function EditIssuePage() {
 
   return (
     <div className="container">
-      <h2>Edit Issue</h2>
+      <PopupCard
+        isOpen={isErrorOpen}
+        message={errorMessage}
+        onClose={() => setIsErrorOpen(false)}
+        innerClassName="error-card-message"
+        outerClassName="error-card-container"
+        title={"Error!"}
+      />
+      <div className="edit-issue-header">
+        <h2>Edit Issue</h2>
+
+      </div>
       <div className="create-issue-form">
         <div>
           <div className="create-issue-form-project-picker">
@@ -92,7 +110,7 @@ function EditIssuePage() {
 
           <div className="create-issue-form-title">
             <TitleBar title={"Title:"} isRequired={true} />
-            <RequiredField required={true} type="text" placeholder="Issue title" isValid={(v)=>setIsTitleValid(v)} value={title} onChange={(e)=>setTitle(e.target.value)} disabled={isSaving} />
+            <InputField isRequired={true} type="text" placeholderText="Issue title" textValue={(v) => setTitle(v)} disabled={isSaving} />
           </div>
 
           <div className="create-issue-form-desc">
@@ -110,9 +128,28 @@ function EditIssuePage() {
             </select>
           </div>
 
-          <button onClick={handleSave} disabled={isSaving} className="create-issue-form-create-button">
-            {isSaving ? 'Saving...' : 'Save Issue'}
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <CustomButton
+              className={"cancel-button"}
+              onClick={() => setIsCancelOpen(true)}
+              disabled={isSaving}
+              text={"Cancel"}
+              type="button"
+            />
+            <button onClick={handleSave} disabled={isSaving} className="create-issue-form-create-button">
+              {isSaving ? 'Saving...' : 'Save Issue'}
+            </button>
+          </div>
+          <PopupCard
+            isOpen={isCancelOpen}
+            message={"Discard changes and go back?"}
+            title={"Confirm"}
+            onClose={() => setIsCancelOpen(false)}
+            onConfirm={() => { setIsCancelOpen(false); navigate(`/issues/${id}`); }}
+            innerClassName="confirm-card-message"
+            confirmText="Discard"
+            cancelText="Keep Editing"
+          />
         </div>
       </div>
     </div>

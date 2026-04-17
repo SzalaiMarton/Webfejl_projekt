@@ -101,7 +101,6 @@ function RegisterPage() {
         message={errorMessage}
         onClose={() => setIsErrorOpen(false)}
         innerClassName="error-card-message"
-        outerClassName="error-card-container"
         title={"Error!"}
       />
       <PopupCard 
@@ -109,7 +108,6 @@ function RegisterPage() {
         message="Registration successful! Redirecting to login..."
         onClose={() => setIsSuccessOpen(false)}
         innerClassName="suc-login-card-message"
-        outerClassName="suc-login-card-container"
         title={"Success!"}
       />
       <div className="form-container">
@@ -199,11 +197,7 @@ function RegisterPage() {
               Already have an account?{" "}
               <a 
                 href="/login" 
-                style={{ 
-                  color: "#007bff", 
-                  textDecoration: "none",
-                  cursor: "pointer"
-                }}
+                className="link-text"
               >
                 Login here
               </a>

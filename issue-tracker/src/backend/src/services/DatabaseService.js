@@ -44,11 +44,11 @@ class DatabaseService {
         const testUser = new User(uuidv4(), 'testuser', 'test@example.com', 'password', 'user');
         this.data.users.push(testUser);
         await this.saveToFile('users');
-        console.log('✓ Seeded test user: test@example.com / password');
+        console.log('Seeded test user: test@example.com / password');
       }
 
       this.isInitialized = true;
-      console.log('✓ Database initialized successfully');
+      console.log('Database initialized successfully');
     } catch (error) {
       console.error('Database initialization error:', error);
       throw error;
@@ -144,11 +144,11 @@ class DatabaseService {
   async updateUser(id, updates) {
     const userIndex = this.data.users.findIndex(u => u.id === id);
     if (userIndex === -1) return null;
-    
     const updatedUser = { ...this.data.users[userIndex], ...updates, updatedAt: new Date().toISOString() };
-    this.data.users[userIndex] = updatedUser;
+    const userInstance = User.fromJSON(updatedUser);
+    this.data.users[userIndex] = userInstance;
     await this.saveToFile('users');
-    return updatedUser;
+    return userInstance;
   }
 
   async deleteUser(id) {
@@ -158,6 +158,14 @@ class DatabaseService {
     const deletedUser = this.data.users.splice(userIndex, 1)[0];
     await this.saveToFile('users');
     return deletedUser;
+  }
+
+  async removeProjectsByOwner(ownerId) {
+    const owned = this.data.projects.filter(p => p.ownerId === ownerId).map(p => p.id);
+    for (const pid of owned) {
+      await this.deleteProject(pid);
+    }
+    return owned;
   }
 
   getAllProjects() {
@@ -200,6 +208,8 @@ class DatabaseService {
       await this.deleteIssue(issue.id);
     }
     
+    await this._removeProjectReferences(id);
+
     return deletedProject;
   }
 
@@ -242,6 +252,8 @@ class DatabaseService {
     for (const comment of commentsToDelete) {
       await this.deleteComment(comment.id);
     }
+
+    await this._removeIssueReferences(id);
     
     return deletedIssue;
   }
@@ -280,7 +292,57 @@ class DatabaseService {
     
     const deletedComment = this.data.comments.splice(commentIndex, 1)[0];
     await this.saveToFile('comments');
+    await this._removeCommentReferences(id);
     return deletedComment;
+  }
+
+  async _removeProjectReferences(projectId) {
+    try {
+      let changed = false;
+      for (const user of this.data.users) {
+        const beforeCreated = user.createdProjects ? user.createdProjects.length : 0;
+        const beforeAssigned = user.assignedProjects ? user.assignedProjects.length : 0;
+        user.createdProjects = (user.createdProjects || []).filter(pid => pid !== projectId);
+        user.assignedProjects = (user.assignedProjects || []).filter(pid => pid !== projectId);
+        if (user.createdProjects.length !== beforeCreated || user.assignedProjects.length !== beforeAssigned) changed = true;
+      }
+      if (changed) await this.saveToFile('users');
+    } catch (error) {
+      console.error('Error removing project references from users:', error);
+      throw error;
+    }
+  }
+
+  async _removeIssueReferences(issueId) {
+    try {
+      let changed = false;
+      for (const user of this.data.users) {
+        const beforeCreated = user.createdIssues ? user.createdIssues.length : 0;
+        const beforeAssigned = user.assignedIssues ? user.assignedIssues.length : 0;
+        user.createdIssues = (user.createdIssues || []).filter(iid => iid !== issueId);
+        user.assignedIssues = (user.assignedIssues || []).filter(iid => iid !== issueId);
+        if (user.createdIssues.length !== beforeCreated || user.assignedIssues.length !== beforeAssigned) changed = true;
+      }
+      if (changed) await this.saveToFile('users');
+    } catch (error) {
+      console.error('Error removing issue references from users:', error);
+      throw error;
+    }
+  }
+
+  async _removeCommentReferences(commentId) {
+    try {
+      let changed = false;
+      for (const user of this.data.users) {
+        const before = user.createdComments ? user.createdComments.length : 0;
+        user.createdComments = (user.createdComments || []).filter(cid => cid !== commentId);
+        if (user.createdComments.length !== before) changed = true;
+      }
+      if (changed) await this.saveToFile('users');
+    } catch (error) {
+      console.error('Error removing comment references from users:', error);
+      throw error;
+    }
   }
 
   getAllLabels() {
