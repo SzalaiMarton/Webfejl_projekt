@@ -30,7 +30,7 @@ class IssueService {
     try {
       const user = db.getUserById(createdById);
       if (user) {
-        const updated = await db.updateUser(createdById, {
+        await db.updateUser(createdById, {
           createdIssues: [...(user.createdIssues || []), created.id]
         });
       }
@@ -109,7 +109,7 @@ class IssueService {
       throw new Error('Issue not found');
     }
 
-    const allowedUpdates = ['title', 'description', 'priority', 'status', 'assignedToId', 'labels'];
+    const allowedUpdates = ['projectId', 'title', 'description', 'priority', 'status', 'assignedToId', 'labels'];
     const validUpdates = {};
     
     for (const key of allowedUpdates) {

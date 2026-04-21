@@ -18,6 +18,7 @@ function CreateProjectPage() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { dispatch } = useStore();
 
@@ -29,6 +30,8 @@ function CreateProjectPage() {
   }, [navigate]);
 
   const handleCreateProject = async () => {
+    setIsSubmitting(true);
+
     if (!title || title.trim().length === 0) {
       setErrorMessage("Please fill in title and select a project");
       setIsErrorOpen(true);
@@ -98,7 +101,14 @@ function CreateProjectPage() {
               isRequired={true}
               type="text"
               placeholderText="Project title"
-              textValue={(v) => setTitle(v)}
+              textValue={title}
+              onChange={(v) => setTitle(v)}
+              verify={(value) => {
+                const errors = [];
+                if (isSubmitting && !value.trim()) errors.push("Project title is required.");
+                if (value.length > 120) errors.push("Project title can be at most 120 characters.");
+                return errors;
+              }}
               disabled={isLoading}
             />
           </div>

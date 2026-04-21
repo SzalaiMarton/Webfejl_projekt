@@ -6,6 +6,9 @@ import AuthService from "../services/AuthService.js";
 import CustomButton from "../components/CustomButton.jsx";
 import AutoResizeTextarea from "../components/AutoResizeTextarea.jsx";
 import PopupCard from "../components/PopupCard.jsx";
+import UserService from "../services/UserService.js";
+import LabelService from "../services/LabelService.js";
+import ProjectService from "../services/ProjectService.js";
 
 function IssueDetailsPage() {
   const { id } = useParams();
@@ -18,6 +21,15 @@ function IssueDetailsPage() {
   const [isPosting, setIsPosting] = useState(false);
   const [isErrorOpen, setIsErrorOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isOpen, setIsOpen] = useState(false);
+  const [issuePriority, setIssuePriority] = useState("text-orange");
+  const [commentAuthors, setCommentAuthors] = useState({});
+  const [issueLabels, setIssueLabels] = useState([]);
+  const [assignedUserName, setAssignedUserName] = useState("");
+  const [projectName, setProjectName] = useState("");
+  const [questionCommentIsOpen, setQuestionCommentIsOpen] = useState(false);
+  const [questionIssueIsOpen, setQuestionIssueIsOpen] = useState(false);
+  const [toBeDeletedComment, setToBeDeletedComment] = useState("");
 
   useEffect(() => {
     if (!AuthService.isAuthenticated()) {
@@ -39,17 +51,86 @@ function IssueDetailsPage() {
       setIsLoading(true);
       const issueData = await IssueService.getIssueById(id);
       setIssue(issueData);
-      
+      setIsOpen(issueData.status === "open" || issueData.status === "in_progress" || issueData.status === "blocked");
+
+      if (issueData.priority === "low") {
+        setIssuePriority("text-green");
+      } else if (issueData.priority === "medium") {
+        setIssuePriority("text-orange");
+      } else if (issueData.priority === "high") {
+        setIssuePriority("text-red");
+      } else if (issueData.priority === "critical") {
+        setIssuePriority("text-red");
+      }
+
       const commentsData = await CommentService.getIssueComments(id);
       setComments(commentsData);
-      
+      await loadCommentAuthors(commentsData);
+      await loadIssueRelations(issueData);
+
       setError(null);
     } catch (err) {
-      setError(err.message);
+      setError("Something went wrong.");
       console.error("Error loading issue:", err);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const loadIssueRelations = async (issueData) => {
+    const tasks = [
+      ProjectService.getProjectById(issueData.projectId)
+        .then((projectData) => setProjectName(projectData.project.name))
+        .catch(() => setProjectName(issueData.projectId))
+    ];
+
+    if (issueData.assignedToId) {
+      tasks.push(
+        UserService.getUserById(issueData.assignedToId)
+          .then((user) => setAssignedUserName(user.username || issueData.assignedToId))
+          .catch(() => setAssignedUserName(issueData.assignedToId))
+      );
+    } else {
+      setAssignedUserName("");
+    }
+
+    if (issueData.labels?.length) {
+      tasks.push(
+        LabelService.getProjectLabels(issueData.projectId)
+          .then((projectLabels) => {
+            setIssueLabels(projectLabels.filter((label) => issueData.labels.includes(label.id)));
+          })
+          .catch(() => setIssueLabels([]))
+      );
+    } else {
+      setIssueLabels([]);
+    }
+
+    await Promise.all(tasks);
+  };
+
+  const loadCommentAuthors = async (commentsData) => {
+    const uniqueAuthorIds = Array.from(
+      new Set((commentsData || []).map((comment) => comment.authorId).filter(Boolean))
+    );
+
+    if (uniqueAuthorIds.length === 0) {
+      setCommentAuthors({});
+      return;
+    }
+
+    const authorEntries = await Promise.all(
+      uniqueAuthorIds.map(async (authorId) => {
+        try {
+          const user = await UserService.getUserById(authorId);
+          return [authorId, user.username || authorId];
+        } catch {
+          return [authorId, authorId];
+        }
+      })
+    );
+
+    setCommentAuthors(Object.fromEntries(authorEntries));
   };
 
   const handleAddComment = async () => {
@@ -59,37 +140,64 @@ function IssueDetailsPage() {
       setIsPosting(true);
       const comment = await CommentService.createComment(id, newComment);
       setComments([...comments, comment]);
+      if (comment.authorId) {
+        setCommentAuthors((currentAuthors) => ({
+          ...currentAuthors,
+          [comment.authorId]: currentAuthors[comment.authorId] || "You",
+        }));
+      }
       setNewComment("");
     } catch (err) {
-      setErrorMessage("Error adding comment: " + err.message);
+      setErrorMessage("Failed to add comment.");
+      console.log(error.message);
       setIsErrorOpen(true);
     } finally {
       setIsPosting(false);
     }
   };
 
-  const handleDeleteComment = async (commentId) => {
-    if (!confirm("Delete this comment?")) return;
+  const openCommentQuestion = (commentId) => {
+    setToBeDeletedComment(commentId);
+    console.log(commentId)
+    setQuestionCommentIsOpen(true);
+  }
 
+  const handleDeleteComment = async () => {
     try {
-      await CommentService.deleteComment(commentId);
-      setComments(comments.filter(c => c.id !== commentId));
+      await CommentService.deleteComment(toBeDeletedComment);
+      setComments(comments.filter(c => c.id !== toBeDeletedComment));
     } catch (err) {
-      setErrorMessage("Error deleting comment: " + err.message);
+      setErrorMessage("Failed to delete comment.");
+      setIsErrorOpen(true);
+    }
+    setQuestionCommentIsOpen(false);
+  };
+
+  const handleStatusChange = async () => {
+    try {
+      const nextStatus = isOpen ? "closed" : "open";
+      const updatedIssue = await IssueService.updateIssue(id, { status: nextStatus });
+      setIssue(updatedIssue);
+      setIsOpen(updatedIssue.status !== "closed" && updatedIssue.status !== "resolved");
+    } catch (err) {
+      setErrorMessage("Failed to update status.");
       setIsErrorOpen(true);
     }
   };
 
-  const handleDeleteIssue = async () => {
-    if (!confirm("Are you sure you want to delete this issue?")) return;
+  const openIssueQuestion = () => {
+    setQuestionIssueIsOpen(true);
+  }
 
+  const handleDeleteIssue = async () => {
     try {
       await IssueService.deleteIssue(id);
       navigate("/projects");
     } catch (err) {
-      setErrorMessage("Error deleting issue: " + err.message);
+      setErrorMessage("Failed to delete project");
       setIsErrorOpen(true);
     }
+    setQuestionIssueIsOpen(false);
   };
 
   if (isLoading) return <div className="container"><h2>Loading...</h2></div>;
@@ -102,11 +210,26 @@ function IssueDetailsPage() {
         message={errorMessage}
         onClose={() => setIsErrorOpen(false)}
         innerClassName="error-card-message"
-        outerClassName="error-card-container"
         title={"Error!"}
       />
+      <PopupCard
+        isOpen={questionCommentIsOpen}
+        message={"Delete this comment?"}
+        onClose={() => setQuestionCommentIsOpen(false)}
+        innerClassName="confirm-card-message"
+        title={"Are you sure!"}
+        onConfirm={handleDeleteComment}
+      />
+      <PopupCard
+        isOpen={questionIssueIsOpen}
+        message={"Delete this Issue?"}
+        onClose={() => setQuestionIssueIsOpen(false)}
+        innerClassName="confirm-card-message"
+        title={"Are you sure!"}
+        onConfirm={handleDeleteIssue}
+      />
       <CustomButton
-        onClick={() => navigate(-1)}
+        onClick={() => navigate(`/projects/${issue.projectId}`)}
         className={"back-button"}
         text={"◀ Back"}
         type="button"
@@ -125,16 +248,38 @@ function IssueDetailsPage() {
             }
           </div>
           <div>
-            {issue.assignedToId && <p><strong>Assigned to:</strong> {issue.assignedToId}</p>}
-            {issue.labels && issue.labels.length > 0 && (
-              <p><strong>Labels:</strong> {issue.labels.join(", ")}</p>
+            <p><strong>Project:</strong> {projectName || issue.projectId}</p>
+            {issue.assignedToId && <p><strong>Assigned to:</strong> {assignedUserName || issue.assignedToId}</p>}
+            {issueLabels.length > 0 && (
+              <div className="project-labels-summary">
+                <strong>Labels:</strong>
+                <div className="label-chip-list compact">
+                  {issueLabels.map((label) => (
+                    <span key={label.id} className="label-chip" style={{ backgroundColor: label.color }}>
+                      {label.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </div>
         <div className="issue-details-right">
           <div className="issue-data">
-            <p><strong>Priority:</strong> {issue.priority}</p>
-            <p><strong>Status:</strong> {issue.status}</p>
+            <div className="issue-inner-data">
+              <strong>Priority:</strong>
+              <p 
+                className={issuePriority}>
+                {issue.priority}
+              </p>
+            </div>
+            <div className="issue-inner-data">
+              <strong>Status:</strong>
+              <p 
+                className={(isOpen ? "text-active" : "text-deactive")}>
+                {issue.status}
+              </p>
+            </div>
             <p><strong>Created:</strong> {new Date(issue.createdAt).toLocaleDateString()}</p>
           </div>
           <div className="util-buttons">
@@ -145,9 +290,22 @@ function IssueDetailsPage() {
               text={"Edit Issue"}
             />
             <CustomButton
-              onClick={handleDeleteIssue}
+              onClick={() => navigate(`/issues/${id}/assign`)}
+              className={"assign-people-button"}
+              text={"Assign People"}
+            />
+            <CustomButton
+              onClick={() => openIssueQuestion(true)}
               className={"delete-button"}
               text={"Delete Issue"}
+            />
+            <CustomButton
+              onClick={handleStatusChange}
+              className={(isOpen ? 
+                "change-status-button-activate" : 
+                "change-status-button-deactivate"
+              )}
+              text={(isOpen ? "Close" : "Reopen")}
             />
           </div>
         </div>
@@ -162,12 +320,12 @@ function IssueDetailsPage() {
         <div style={{ marginBottom: "2rem" }}>
           {comments.map((comment) => (
             <div key={comment.id} className="comment-card">
-              <p><strong>{comment.authorId}</strong> - {new Date(comment.createdAt).toLocaleString()}</p>
+              <p><strong>{commentAuthors[comment.authorId] || comment.authorId}</strong> - {new Date(comment.createdAt).toLocaleString()}</p>
               <p>{comment.content}</p>
               <CustomButton
                 type="button"
-                onClick={() => handleDeleteComment(comment.id)}
-                className={"comment-delete-btn"}
+                onClick={() => openCommentQuestion(comment.id)}
+                className={"delete-button"}
                 text={"Delete"}
               />
             </div>

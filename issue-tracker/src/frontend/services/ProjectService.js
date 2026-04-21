@@ -69,6 +69,26 @@ class ProjectService {
       throw error;
     }
   }
+
+  static async assignUserToProject(projectId, userId) {
+    try {
+      const response = await ApiService.post(`/projects/${projectId}/assign-user`, { userId });
+      return response.user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async removeUserFromProject(projectId, userId) {
+    try {
+      const response = await ApiService.delete(`/projects/${projectId}/assign-user`, {
+        body: JSON.stringify({ userId }),
+      });
+      return response.user;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default ProjectService;

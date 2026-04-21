@@ -24,6 +24,7 @@ function CreateIssuePage() {
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingProjects, setIsLoadingProjects] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { dispatch } = useStore();
 
   useEffect(() => {
@@ -41,7 +42,7 @@ function CreateIssuePage() {
       
       setProjects(data);
       if (data.length > 0) {
-        setSelectedProjectId(data[0].id);
+        setSelectedProjectId(data[0].project.id);
       }
     } catch (err) {
       setErrorMessage("Error loading projects: " + err.message);
@@ -52,6 +53,8 @@ function CreateIssuePage() {
   };
 
   const handleCreateIssue = async () => {
+    setIsSubmitting(true);
+
     if ((!title || title.trim().length === 0) && !selectedProjectId) {
       setErrorMessage("Please fill in the title and select a project.");
       setIsErrorOpen(true);
@@ -157,7 +160,14 @@ function CreateIssuePage() {
               isRequired={true}
               type="text"
               placeholderText="Issue title"
-              textValue={(v) => setTitle(v)}
+              textValue={title}
+              onChange={(v) => setTitle(v)}
+              verify={(value) => {
+                const errors = [];
+                if (isSubmitting && !value.trim()) errors.push("Title is required.");
+                if (value.length > 120) errors.push("Title can be at most 120 characters.");
+                return errors;
+              }}
               disabled={isLoading}
             />
           </div>

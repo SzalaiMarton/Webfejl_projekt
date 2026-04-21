@@ -1,6 +1,13 @@
 import { useRef, useEffect } from "react";
 
-function AutoResizeTextarea({placeholder, className, maxChar, value, onChange, disabled, style}) {
+function AutoResizeTextarea({
+  placeholder, 
+  className, 
+  maxChar, 
+  value, 
+  onChange, 
+  disabled, 
+  style}) {
   const textareaRef = useRef(null);
 
   const handleInput = (e) => {

@@ -77,6 +77,16 @@ function EditProjectPage() {
         outerClassName="error-card-container"
         title={"Error!"}
       />
+      <PopupCard
+        isOpen={isCancelOpen}
+        message={"Discard changes and go back?"}
+        title={"Going back?"}
+        onClose={() => setIsCancelOpen(false)}
+        onConfirm={() => { setIsCancelOpen(false); navigate(`/projects/${id}`); }}
+        innerClassName="confirm-card-message"
+        confirmText="Discard"
+        cancelText="Keep Editing"
+      />
       <h2>Edit Project</h2>
       <div className="create-project-form">
         <div>
@@ -86,8 +96,9 @@ function EditProjectPage() {
               isRequired={true}
               type="text"
               placeholderText="Project title"
-              textValue={(v) => setTitle(v)}
+              textValue={title}
               disabled={isSaving}
+              onChange={(v) => {setTitle(v)}}
             />
           </div>
 
@@ -105,27 +116,19 @@ function EditProjectPage() {
 
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <CustomButton
+              className={"create-project-form-create-button"}
+              text={(isSaving ? 'Saving...' : 'Save Project')}
+              onClick={handleSave}
+              disabled={isSaving}
+            />
+            <CustomButton
               className={"cancel-button"}
               onClick={() => setIsCancelOpen(true)}
               disabled={isSaving}
               text={"Cancel"}
               type="button"
             />
-            <button onClick={handleSave} disabled={isSaving} className="create-project-form-create-button">
-              {isSaving ? 'Saving...' : 'Save Project'}
-            </button>
           </div>
-          <PopupCard
-            isOpen={isCancelOpen}
-            message={"Discard changes and go back?"}
-            title={"Confirm"}
-            onClose={() => setIsCancelOpen(false)}
-            onConfirm={() => { setIsCancelOpen(false); navigate(`/projects/${id}`); }}
-            innerClassName="confirm-card-message"
-            outerClassName="confirm-card-container"
-            confirmText="Discard"
-            cancelText="Keep Editing"
-          />
         </div>
       </div>
     </div>

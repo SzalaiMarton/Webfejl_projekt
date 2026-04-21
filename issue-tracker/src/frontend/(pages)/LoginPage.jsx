@@ -18,6 +18,14 @@ function LoginPage() {
   const [errorMessage, setErrorMessage] = useState("Login failed");
   const [isLoading, setIsLoading] = useState(false);
 
+  const handlePasswordChange = (v) => {
+    setPassword(password + v);
+  }
+
+  const handleEmailChange = (v) => {
+    setEmail(email + v);
+  }
+
   const verifyEmail = (value) => {
     if (value.length === 0) { return []; }
     
@@ -81,11 +89,12 @@ function LoginPage() {
             <InputField 
               id={formId+"-email"}
               placeholderText="Enter email"
-              textValue={(value) => setEmail(value)}
+              textValue={""}
               verify={verifyEmail}
               disabled={isLoading}
               isRequired={true}
               errorsEnabled={true}
+              onChange={handleEmailChange}
             />
           </div>
           <div className="form-container-field">
@@ -97,12 +106,13 @@ function LoginPage() {
             <InputField 
               id={formId+"-password"}
               placeholderText="Enter password"
-              textValue={(value) => setPassword(value)}
+              textValue={""}
               verify={verifyPassword}
               disabled={isLoading}
               isRequired={true}
               type="password"
               errorsEnabled={false}
+              onChange={handlePasswordChange}
             />
           </div>
           <div>

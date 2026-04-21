@@ -100,6 +100,18 @@ select {
     margin: 0;
 }
 
+.confirm-card-message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-medium);
+    max-width: 500px;
+    width: 90%;
+    margin: 0;
+}
+
 .suc-login-card-message {
     display: flex;
     flex-direction: column;
@@ -214,10 +226,25 @@ select {
     padding: var(--space-medium);
 }
 
-.issue-data {
-    padding: var(--space-small);
-    width: 160px;
+
+
+.issue-card-data {
+    height: 30px;
+    display: flex;
+    align-items: center;
+    padding-left: 20px;
 }
+
+.issue-inner-data p {
+    font-weight: bold;
+}
+
+.issue-inner-data {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
 .recent-issues-container {
 
 }
@@ -247,6 +274,14 @@ select {
     align-items: center;
 }
 
+.project-card-labels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: var(--space-small);
+    margin-bottom: var(--space-small);
+}
+
 .issue-details-right {
     display: flex;
     flex-direction: column;
@@ -257,10 +292,10 @@ select {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+    gap: 10px;
 }
 
 .util-desc {
-    flex: 1;
     min-width: 0px;
 }
 
@@ -274,17 +309,25 @@ select {
 }
 
 .issue-details-left {
+}
 
+.issue-data {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: var(--space-small);
+    width: 160px;
 }
 
 .util-buttons {
     display: flex;
-    flex-shrink: 0px;
     flex-direction: column;
+    align-items: center;
     padding-bottom: var(--space-medium);
     padding-left: var(--space-medium);
     padding-right: var(--space-medium);
     width: 140px;
+    max-width: 140px;
 }
 
 .util-buttons button {
@@ -309,6 +352,100 @@ select {
     gap: var(--space-small);
 }
 
+.project-labels-summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-small);
+    margin-top: var(--space-medium);
+}
+
+.label-chip-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.label-chip-list.compact {
+    gap: 8px;
+}
+
+.label-chip-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-small);
+    width: 100%;
+}
+
+.label-manager-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-medium);
+}
+
+.label-manager-modal {
+    width: min(720px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    outline: none;
+}
+
+.label-manager-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-medium);
+    padding: var(--space-large);
+    border-radius: var(--radius-large);
+}
+
+.label-manager-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-medium);
+}
+
+.label-manager-close {
+    width: auto;
+    padding: 0.5rem 0.75rem;
+}
+
+.label-manager-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-small);
+}
+
+.label-manager-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.label-manager-form input[type="color"] {
+    width: 80px;
+    height: 44px;
+    padding: 0;
+}
+
+.label-manager-form textarea {
+    width: 100%;
+    max-width: 100%;
+}
+
+.label-manager-error {
+    margin: 0;
+}
+
+.label-chip-delete {
+    width: auto;
+    height: auto;
+    padding: 0.4rem 0.7rem;
+}
+
 .post-button {
     padding: 0.5rem 1rem;
 }
@@ -319,11 +456,21 @@ select {
 }
 
 .search-wrapper {
-    margin-bottom: 1rem;
+    display: flex;
+    margin-bottom: var(--space-small);
+    max-width: 500px;
+}
+
+.list-controls {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-small);
+    margin-bottom: var(--space-medium);
+    max-width: 500px;
 }
 
 .search-input {
-    padding: 0.5rem;
+    padding: var(--space-small);
     width: 100%;
     max-width: 400px;
 }
@@ -419,7 +566,27 @@ select {
     width: 100%;
 }
 
+.assign-people-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-small);
+    margin-bottom: var(--space-medium);
+}
 
+.assign-people-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-small);
+}
+
+.assign-people-item input {
+    width: auto;
+    height: auto;
+}
+
+.assign-people-context-text {
+    margin-bottom: 0;
+}
 
 
 .form-container {
@@ -473,6 +640,19 @@ select {
 
     .navbar-links a.active {
         font-size: var(--text-size-menu-items-smaller);
+    }
+
+    .project-card-header,
+    .label-chip-row,
+    .label-manager-header,
+    .utils {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .issue-details-right,
+    .util-buttons {
+        width: 100%;
     }
 }
 

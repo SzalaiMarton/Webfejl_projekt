@@ -30,6 +30,10 @@ textarea:focus {
     font-style: normal;
 }
 
+strong {
+    font-family: var(--text-family-p);
+}
+
 h1 {
     font-family: var(--text-family-p);
 }
@@ -130,6 +134,18 @@ li {
     font-size: small;
 }
 
+.label-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    color: white;
+    font-size: 0.85rem;
+    font-family: var(--text-family-p);
+    box-shadow: var(--shadow-medium);
+}
+
 
 .container {
     background-color: var(--color-bg-s);
@@ -155,8 +171,7 @@ li {
 }
 
 .delete-button {
-    background-color: white;
-    color: var(--color-error);
+    background-color: var(--color-error);
 }
 
 .dashboard-container {
@@ -166,15 +181,20 @@ li {
 }
 
 .recent-issues-container {
+}
 
+.text-active {
+    color: var(--color-success);
+}
+
+.text-deactive {
+    color: var(--color-error);
 }
 
 .your-projects-container {
-    display: lis;
 }
 
 .statistics-container {
-    
 }
 
 .util-buttons {
@@ -228,6 +248,28 @@ li {
     font-size: larger;
 }
 
+.text-green {
+    color: var(--color-success);
+}
+
+.text-orange {
+    color: var(--color-warning);
+}
+
+.text-red {
+    color: var(--color-error);
+}
+
+.dashboard-container h3 {
+    color: var(--color-accent-p);
+}
+
+.issue-card-data {
+    border-radius: var(--radius-medium);
+    border: white solid var(--border-thickness-thin);
+    background-color: var(--color-bg-p);
+}
+
 /*-------------------------------------------------
                 ISSUE
 -------------------------------------------------*/
@@ -236,6 +278,10 @@ li {
 /*-------------------------------------------------
                 PROJECT
 -------------------------------------------------*/
+
+.back-button {
+    background-color: var(--color-bg-p);
+}
 
 .create-project-form-create-button {
     background-color: rgba(38, 140, 13);
@@ -256,6 +302,17 @@ li {
 
 .create-project-form-project-picker label {
     font-size: larger;
+}
+
+.assign-people-item {
+    padding: var(--space-small);
+    border-radius: var(--radius-medium);
+    background-color: var(--color-bg-p);
+    border: var(--border-thickness-thin) solid white;
+}
+
+.assign-people-context-text {
+    font-weight: bold;
 }
 
 /*-------------------------------------------------
@@ -293,9 +350,42 @@ li {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+.change-status-button-activate  {
+    background-color: var(--color-error);
+}
+
+.change-status-button-deactivate  {
+    background-color: var(--color-success);
+}
+
+.confirm-card-message {
+    background-color: var(--color-warning);
+    border-radius: var(--radius-medium);
+    border: var(--border-thickness-thick) solid white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
 .suc-login-card-message {
     border-radius: var(--radius-medium);
     background-color: var(--color-success);
     border: var(--border-thickness-thick) solid white;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.label-manager-card {
+    background-color: var(--color-bg-s);
+    color: var(--color-text-p);
+    border: var(--border-thickness-thin) solid white;
+    box-shadow: var(--shadow-medium);
+}
+
+.label-manager-error {
+    color: var(--color-error);
+    font-weight: bold;
+}
+
+.label-chip-delete,
+.label-manager-close {
+    background-color: var(--color-bg-p);
+    color: var(--color-text-p);
 }

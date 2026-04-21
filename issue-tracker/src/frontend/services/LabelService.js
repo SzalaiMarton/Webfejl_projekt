@@ -19,13 +19,12 @@ class LabelService {
     }
   }
 
-  static async createLabel(projectId, name, color, description = '') {
+  static async createLabel(projectId, name, color) {
     try {
       const response = await ApiService.post('/labels', {
         projectId,
         name,
         color,
-        description,
       });
       return response.label;
     } catch (error) {

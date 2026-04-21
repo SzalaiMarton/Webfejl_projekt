@@ -3,9 +3,9 @@ import { Label } from '../models/Label.js';
 import { v4 as uuidv4 } from 'uuid';
 
 class LabelService {
-  async createLabel(projectId, name, color, description = '') {
-    if (!projectId || !name || !color) {
-      throw new Error('Project ID, name, and color are required');
+  async createLabel(projectId, name, color, createdById) {
+    if (!projectId || !name || !color || !createdById) {
+      throw new Error('Project ID, name, color, and creator are required');
     }
 
     const project = db.getProjectById(projectId);
@@ -17,7 +17,7 @@ class LabelService {
       throw new Error('Invalid hex color code');
     }
 
-    const label = new Label(uuidv4(), projectId, name, color, description);
+    const label = new Label(uuidv4(), projectId, name.trim(), color, createdById);
     return await db.createLabel(label);
   }
 
@@ -51,7 +51,7 @@ class LabelService {
       throw new Error('Invalid hex color code');
     }
 
-    const allowedUpdates = ['name', 'color', 'description'];
+    const allowedUpdates = ['name', 'color'];
     const validUpdates = {};
     
     for (const key of allowedUpdates) {

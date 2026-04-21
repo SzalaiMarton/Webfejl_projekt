@@ -110,12 +110,31 @@ function EditIssuePage() {
 
           <div className="create-issue-form-title">
             <TitleBar title={"Title:"} isRequired={true} />
-            <InputField isRequired={true} type="text" placeholderText="Issue title" textValue={(v) => setTitle(v)} disabled={isSaving} />
+            <InputField 
+              isRequired={true} 
+              type="text" 
+              textValue={title}
+              placeholderText="Issue title" 
+              onChange={setTitle}
+              verify={(value) => {
+                const errors = [];
+                if (!value.trim()) errors.push("Title is required.");
+                if (value.length > 120) errors.push("Title can be at most 120 characters.");
+                return errors;
+              }}
+              disabled={isSaving} 
+            />
           </div>
 
           <div className="create-issue-form-desc">
             <TitleBar title={"Description:"} isRequired={false} />
-            <AutoResizeTextarea maxChar={800} placeholder="Issue Description" value={description} onChange={(e)=>setDescription(e.target.value)} disabled={isSaving} />
+            <AutoResizeTextarea
+              maxChar={800} 
+              placeholder="Issue Description" 
+              value={description} 
+              onChange={(e) => setDescription(e.target.value)} 
+              disabled={isSaving} 
+              />
           </div>
 
           <div className="create-issue-form-priority">
@@ -130,15 +149,19 @@ function EditIssuePage() {
 
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <CustomButton
+              className={"create-issue-form-create-button"}
+              onClick={handleSave}
+              disabled={isSaving}
+              text={(isSaving ? 'Saving...' : 'Save Issue')}
+              type="button"
+            />
+            <CustomButton
               className={"cancel-button"}
               onClick={() => setIsCancelOpen(true)}
               disabled={isSaving}
               text={"Cancel"}
               type="button"
             />
-            <button onClick={handleSave} disabled={isSaving} className="create-issue-form-create-button">
-              {isSaving ? 'Saving...' : 'Save Issue'}
-            </button>
           </div>
           <PopupCard
             isOpen={isCancelOpen}

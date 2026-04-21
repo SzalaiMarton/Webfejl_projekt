@@ -94,6 +94,15 @@ class IssueService {
     }
   }
 
+  static async unassignIssue(issueId) {
+    try {
+      const response = await ApiService.patch(`/issues/${issueId}/unassign`);
+      return response.issue;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   static async updateIssueLabels(issueId, labelId, action) {
     try {
       const response = await ApiService.patch(`/issues/${issueId}/labels`, {

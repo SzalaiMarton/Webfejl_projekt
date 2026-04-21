@@ -6,6 +6,23 @@ import ProjectService from '../services/ProjectService.js';
 
 const router = express.Router();
 
+const getLabelOwnerId = (label) => {
+  if (label.createdById) {
+    return label.createdById;
+  }
+
+  if (label.projectId) {
+    try {
+      const project = ProjectService.getProjectById(label.projectId);
+      return project.ownerId;
+    } catch {
+      return null;
+    }
+  }
+
+  return null;
+};
+
 router.get('/', optionalAuth, asyncHandler(async (req, res) => {
   try {
     const labels = LabelService.getAllLabels();
@@ -25,7 +42,7 @@ router.get('/project/:projectId', optionalAuth, asyncHandler(async (req, res) =>
 }));
 
 router.post('/', requireSessionAuth, asyncHandler(async (req, res) => {
-  const { projectId, name, color, description } = req.body;
+  const { projectId, name, color } = req.body;
 
   if (!projectId || !name || !color) {
     return res.status(400).json({
@@ -39,7 +56,7 @@ router.post('/', requireSessionAuth, asyncHandler(async (req, res) => {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    const label = await LabelService.createLabel(projectId, name, color, description);
+    const label = await LabelService.createLabel(projectId, name, color, req.userId);
     res.status(201).json({
       message: 'Label created successfully',
       label
@@ -52,9 +69,8 @@ router.post('/', requireSessionAuth, asyncHandler(async (req, res) => {
 router.patch('/:id', requireSessionAuth, asyncHandler(async (req, res) => {
   try {
     const label = LabelService.getLabelById(req.params.id);
-    const project = ProjectService.getProjectById(label.projectId);
 
-    if (project.ownerId !== req.userId) {
+    if (getLabelOwnerId(label) !== req.userId) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
@@ -71,9 +87,8 @@ router.patch('/:id', requireSessionAuth, asyncHandler(async (req, res) => {
 router.delete('/:id', requireSessionAuth, asyncHandler(async (req, res) => {
   try {
     const label = LabelService.getLabelById(req.params.id);
-    const project = ProjectService.getProjectById(label.projectId);
 
-    if (project.ownerId !== req.userId) {
+    if (getLabelOwnerId(label) !== req.userId) {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 

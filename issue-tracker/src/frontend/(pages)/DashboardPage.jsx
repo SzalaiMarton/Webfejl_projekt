@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import IssueService from "../services/IssueService.js";
 import ProjectService from "../services/ProjectService.js";
+import CommentService from "../services/CommentService.js";
 import AuthService from "../services/AuthService.js";
 
 import "../styles/tokens.css";
@@ -10,8 +11,9 @@ import "../styles/layout.css";
 
 function DashboardPage() {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
   const [recentIssues, setRecentIssues] = useState([]);
+  const [recentComments, setRecentComments] = useState([]);
+  const [commentIssueTitles, setCommentIssueTitles] = useState({});
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -21,24 +23,65 @@ function DashboardPage() {
       return;
     }
 
-    loadDashboard();
+    const loadCommentIssueTitles = async (comments) => {
+      const uniqueIssueIds = Array.from(new Set((comments || []).map((comment) => comment.issueId).filter(Boolean)));
+
+      if (uniqueIssueIds.length === 0) {
+        setCommentIssueTitles({});
+        return;
+      }
+
+      const entries = await Promise.all(
+        uniqueIssueIds.map(async (issueId) => {
+          try {
+            const issue = await IssueService.getIssueById(issueId);
+            return [issueId, issue.title || issueId];
+          } catch {
+            return [issueId, issueId];
+          }
+        })
+      );
+
+      setCommentIssueTitles(Object.fromEntries(entries));
+    };
+
+    const runDashboardLoad = async () => {
+      try {
+        setIsLoading(true);
+        
+        try {
+          const projectsData = await ProjectService.getCurrentUserProjects();
+          setProjects(projectsData.slice(0, 3));
+        } catch (error) {
+          console.log(error.message);
+        } 
+        
+        
+        try {
+          const issuesData = await IssueService.getCurrentUserIssues({ sortBy: "createdAt", sortOrder: "desc" });
+          setRecentIssues(issuesData.slice(0, 5));
+        } catch (error) {
+          console.log(error.message);
+        }
+
+        try {
+          const userId = AuthService.getCurrentUserIdFromStorage();
+          const recentCommentsData = await CommentService.getUserRecentComments(userId, 3);
+          setRecentComments(recentCommentsData);
+          await loadCommentIssueTitles(recentCommentsData);
+        } catch (error) {
+          console.log(error.message);
+        }
+
+      } catch (error) {
+        console.error("Error loading dashboard:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    runDashboardLoad();
   }, [navigate]);
-
-  const loadDashboard = async () => {
-    try {
-      setIsLoading(true);
-      
-      const projectsData = await ProjectService.getCurrentUserProjects();
-      const issuesData = await IssueService.getCurrentUserIssues({ sortBy: "createdAt", sortOrder: "desc" });
-
-      setProjects(projectsData.slice(0, 3));
-      setRecentIssues(issuesData.slice(0, 5));
-    } catch (error) {
-      console.error("Error loading dashboard:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <div className="container">
@@ -46,7 +89,7 @@ function DashboardPage() {
       {isLoading ? (
         <p>Loading dashboard...</p>
       ) : (
-        (projects.length === 0 && recentIssues.length === 0) ? (
+        (projects.length === 0) ? (
           <div className="empty-dashboard">
             <p>Nothing to show here.</p>
             <p>
@@ -60,10 +103,30 @@ function DashboardPage() {
           </div>
         ) : (
         <div className="dashboard-container">
+          <div className="recent-comments-container">
+            {recentComments.length > 0 ? <h3>Your Recent Comments</h3> : <></>}
+            {recentComments.length === 0 ? (
+              <></>
+            ) : (
+              <ul style={{ listStyle: "none", padding: 0 }}>
+                {recentComments.map((c, idx) => (
+                  <li
+                    key={c.id}
+                    style={{ padding: "0.5rem 0" }}
+                  >
+                    <strong>#{idx+1} {c.content}</strong>
+                    <br />
+                    <small>On Issue: {commentIssueTitles[c.issueId] || c.issueId} | {new Date(c.createdAt).toLocaleString()}</small>
+                    <hr></hr>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
           <div className="recent-issues-container">
             {recentIssues.length > 0 ? <h3>Recent Issues</h3> : <></>}
             {recentIssues.length === 0 ? (
-              <p>No recent issues to display.</p>
+              <></>
             ) : (
               <ul style={{ listStyle: "none", padding: 0 }}>
                 {recentIssues.map((issue, idx) => (
@@ -110,13 +173,6 @@ function DashboardPage() {
                 ))}
               </ul>
             )}
-          </div>
-
-          <div className="statistics-container">
-            <h3>Statistics</h3>
-            <p>Total Issues: {recentIssues.length}</p>
-            <p>Total Projects: {projects.length}</p>
-            <p>Status: <span>Active</span></p>
           </div>
         </div>
         )

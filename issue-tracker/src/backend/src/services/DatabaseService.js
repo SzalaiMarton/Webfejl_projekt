@@ -2,6 +2,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { User } from '../models/User.js';
+import { Label } from '../models/Label.js';
 import { v4 as uuidv4 } from 'uuid';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -32,6 +33,8 @@ class DatabaseService {
           
           if (key === 'users') {
             this.data[key] = loadedData.map(userData => User.fromJSON(userData));
+          } else if (key === 'labels') {
+            this.data[key] = loadedData.map(labelData => Label.fromJSON(labelData));
           } else {
             this.data[key] = loadedData;
           }
@@ -355,6 +358,10 @@ class DatabaseService {
 
   getLabelsByProjectId(projectId) {
     return this.data.labels.filter(l => l.projectId === projectId);
+  }
+
+  getLabelsByCreatorId(createdById) {
+    return this.data.labels.filter(l => l.createdById === createdById);
   }
 
   async createLabel(label) {

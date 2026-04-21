@@ -35,6 +35,48 @@ class CommentService {
     return created;
   }
 
+  async assignCommentToIssue(commentId, issueId) {
+    const comment = db.getCommentById(commentId);
+    if (!comment) {
+      throw new Error('Comment not found');
+    }
+
+    const issue = db.getIssueById(issueId);
+    if (!issue) {
+      throw new Error('Issue not found');
+    }
+
+    return await db.updateComment(commentId, { issueId });
+  }
+
+  async assignCommentToUser(commentId, userId) {
+    const comment = db.getCommentById(commentId);
+    if (!comment) {
+      throw new Error('Comment not found');
+    }
+
+    const nextAuthor = db.getUserById(userId);
+    if (!nextAuthor) {
+      throw new Error('User not found');
+    }
+
+    if (comment.authorId !== userId) {
+      const previousAuthor = db.getUserById(comment.authorId);
+
+      if (previousAuthor) {
+        await db.updateUser(previousAuthor.id, {
+          createdComments: (previousAuthor.createdComments || []).filter(id => id !== commentId)
+        });
+      }
+
+      await db.updateUser(userId, {
+        createdComments: Array.from(new Set([...(nextAuthor.createdComments || []), commentId]))
+      });
+    }
+
+    return await db.updateComment(commentId, { authorId: userId });
+  }
+
   getAllComments() {
     return db.getAllComments();
   }

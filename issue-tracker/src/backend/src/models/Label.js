@@ -1,16 +1,16 @@
 export class Label {
-  constructor(id, projectId, name, color, description = '') {
+  constructor(id, projectId, name, color, createdById = null) {
     this.id = id;
-    this.projectId = projectId; // Project.id
+    this.projectId = projectId;
     this.name = name;
     this.color = color; // hex color code
-    this.description = description;
+    this.createdById = createdById;
     this.createdAt = new Date().toISOString();
     this.updatedAt = new Date().toISOString();
   }
 
   static fromJSON(data) {
-    const label = new Label(data.id, data.projectId, data.name, data.color, data.description);
+    const label = new Label(data.id, data.projectId || null, data.name, data.color, data.createdById || null);
     label.createdAt = data.createdAt;
     label.updatedAt = data.updatedAt;
     return label;

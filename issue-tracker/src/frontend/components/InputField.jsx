@@ -1,37 +1,51 @@
 import { useState, useEffect } from "react";
-
-import "../styles/design.css"
-import "../styles/tokens.css"
-
-function InputField({ id = "", errorsEnabled = true, maxLength, isRequired, placeholderText, textValue, verify, disabled = false, type = "text" }) {
-  const [inputValue, setInputValue] = useState("");
+ 
+import "../styles/design.css";
+import "../styles/tokens.css";
+ 
+function InputField({
+  id = "",
+  errorsEnabled = true,
+  maxLength = 0,
+  isRequired = false,
+  placeholderText = "",
+  textValue = "",
+  verify = null,
+  disabled = false,
+  type = "text",
+  onChange = null,
+}) {
   const [errors, setErrors] = useState([]);
-
-  const handleChange = (e) => {
-    const value = e.target.value;
-    setInputValue(value);
-    textValue(value);
-  };
-
+  const [value, setValue] = useState(textValue);
+ 
   useEffect(() => {
-    const newErrors = verify ? verify(inputValue) : [];
+    setValue(textValue);
+  }, [textValue]);
+ 
+  useEffect(() => {
+    const newErrors = verify ? verify(value) : [];
     setErrors(Array.isArray(newErrors) ? newErrors : []);
-  }, [inputValue, verify]);
-
+  }, [value, verify]);
+ 
+  const handleChange = (e) => {
+    const v = e.target.value;
+    setValue(v);
+    onChange(v);
+  };
+ 
   return (
     <div className="input-field">
       <input
         id={id}
-        maxLength={maxLength}
+        maxLength={maxLength || undefined}
         required={isRequired}
         type={type}
         placeholder={placeholderText}
-        value={inputValue}
+        value={value}
         onChange={handleChange}
         disabled={disabled}
-        
       />
-
+ 
       {errorsEnabled && errors.length > 0 && (
         <ul>
           {errors.map((err, i) => (
@@ -39,17 +53,12 @@ function InputField({ id = "", errorsEnabled = true, maxLength, isRequired, plac
           ))}
         </ul>
       )}
-
-      {(errorsEnabled && (errors.length === 0 || errors.length === 0 && inputValue.length > 0)) && (
+ 
+      {(errorsEnabled && errors.length === 0) || !errorsEnabled ? (
         <p></p>
-      )}
-
-      {!errorsEnabled && (
-        <p></p>
-      )}
-    
+      ) : null}
     </div>
   );
 }
-
+ 
 export default InputField;
