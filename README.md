@@ -5,10 +5,11 @@
 ### Screenshots
 
 <p align="center">
-  <img src="screenshots/404pagenotfound.png" alt="Screenshot" width="300">
-  <img src="screenshots/create-issue.png" alt="Screenshot" width="300">
-  <img src="screenshots/dashboard.png" alt="Screenshot" width="300">
-  <img src="screenshots/error-popup.png" alt="Screenshot" width="300">
-  <img src="screenshots/login.png" alt="Screenshot" width="300">
-  <img src="screenshots/projects.png" alt="Screenshot" width="300">
+  <img src="screenshots/v2/login_page.png" alt="Screenshot" width="200">
+  <img src="screenshots/v2/dashboard.png" alt="Screenshot" width="200">
+  <img src="screenshots/v2/projects_page.png" alt="Screenshot" width="200">
+  <img src="screenshots/v2/project_details.png" alt="Screenshot" width="200">
+  <img src="screenshots/v2/issue_details.png" alt="Screenshot" width="200">
+  <img src="screenshots/v2/create-issue.png" alt="Screenshot" width="200">
+  <img src="screenshots/v2/create-project.png" alt="Screenshot" width="200">
 </p>
