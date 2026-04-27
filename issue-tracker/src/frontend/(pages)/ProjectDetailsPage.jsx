@@ -10,6 +10,7 @@ import PopupCard from "../components/PopupCard.jsx";
 import ProjectLabelsModal from "../components/ProjectLabelsModal.jsx";
 import UserService from "../services/UserService.js";
 import LabelService from "../services/LabelService.js";
+import { useAuth } from "../services/AuthContext.jsx";
 
 function ProjectDetailsPage() {
   const { id } = useParams();
@@ -29,6 +30,7 @@ function ProjectDetailsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [sortBy, setSortBy] = useState("latest");
+  const { user } = useAuth();
 
   useEffect(() => {
     if (!AuthService.isAuthenticated()) {
@@ -112,6 +114,8 @@ function ProjectDetailsPage() {
   if (isLoading) return <div className="container"><h2>Loading...</h2></div>;
   if (error) return <div className="container"><h2>Error: {error}</h2></div>;
 
+  const isOwner = user?.id === project?.ownerId;
+
   return (
     <div className="container">
       <PopupCard
@@ -185,33 +189,39 @@ function ProjectDetailsPage() {
           </div>
           <div className="util-buttons">
             <h4>Options:</h4>
-            <CustomButton
-              onClick={() => navigate(`/projects/${id}/edit`)}
-              text={"Edit Project"}
-              className={"edit-button"}
-            />
-            <CustomButton
-              onClick={() => navigate(`/projects/${id}/assign`)}
-              text={"Assign People"}
-              className={"assign-people-button"}
-            />
-            <CustomButton
-              onClick={() => setIsLabelsModalOpen(true)}
-              text={"Labels"}
-              className={"edit-button"}
-            />
-            <CustomButton
-              className={"delete-button"}
-              onClick={() => setQuestionIsOpen(true)}
-              text={"Delete Project"}
-            />
-            <CustomButton
-              className={(isActive ? 
-                "change-status-button-activate" :
-                "change-status-button-deactivate")}
-              onClick={handleProjectStatusChange}
-              text={(isActive ? "Deactivate" : "Activate")}
-            />
+            {isOwner ? (
+              <>
+                <CustomButton
+                  onClick={() => navigate(`/projects/${id}/edit`)}
+                  text={"Edit Project"}
+                  className={"edit-button"}
+                />
+                <CustomButton
+                  onClick={() => navigate(`/projects/${id}/assign`)}
+                  text={"Assign People"}
+                  className={"assign-people-button"}
+                />
+                <CustomButton
+                  onClick={() => setIsLabelsModalOpen(true)}
+                  text={"Labels"}
+                  className={"edit-button"}
+                />
+                <CustomButton
+                  className={"delete-button"}
+                  onClick={() => setQuestionIsOpen(true)}
+                  text={"Delete Project"}
+                />
+                <CustomButton
+                  className={(isActive ?
+                    "change-status-button-activate" :
+                    "change-status-button-deactivate")}
+                  onClick={handleProjectStatusChange}
+                  text={(isActive ? "Deactivate" : "Activate")}
+                />
+              </>
+            ) : (
+              <p>Only the project owner can edit settings and memberships.</p>
+            )}
           </div>
         </div>
       </div>

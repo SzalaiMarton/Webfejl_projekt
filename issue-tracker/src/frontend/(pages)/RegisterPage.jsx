@@ -40,7 +40,7 @@ function RegisterPage() {
     if (value.length === 0) {return [];}
 
     const errors = [];
-    if (!value.includes('@')) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       errors.push("Please enter a valid email");
     }
     setIsEmailValid(errors.length === 0 && value.length > 0);

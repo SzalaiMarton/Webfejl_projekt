@@ -12,7 +12,7 @@ class UserService {
       throw new Error('Invalid email format');
     }
     if (!validatePassword(password)) {
-      throw new Error('Password must be at least 6 characters');
+      throw new Error('Password must be at least 8 characters long and include uppercase, lowercase, number, and special character');
     }
 
     if (db.getUserByEmail(email)) {
@@ -27,6 +27,14 @@ class UserService {
   }
 
   loginUser(email, password) {
+    if (!validateEmail(email)) {
+      throw new Error('Invalid email format');
+    }
+
+    if (typeof password !== 'string' || password.length === 0) {
+      throw new Error('Password is required');
+    }
+
     const user = db.getUserByEmail(email);
 
     if(!user) {
@@ -66,6 +74,10 @@ class UserService {
       if (key in updates) {
         validUpdates[key] = updates[key];
       }
+    }
+
+    if ('username' in validUpdates && !validateUsername(validUpdates.username)) {
+      throw new Error('Invalid username format');
     }
 
     const updatedUser = await db.updateUser(userId, validUpdates);

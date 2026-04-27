@@ -1,14 +1,17 @@
 import ApiService from './ApiService.js';
+import { buildStoredSession, isSessionLocallyValid } from './authHelpers.js';
 
 class AuthService {
   static removeSession() {
     localStorage.removeItem('userId');
+    localStorage.removeItem('expiresAt');
     window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: false, user: null } }));
   }
 
   static createSession(response) {
-    localStorage.setItem('userId', JSON.stringify(response.user.id));
-    localStorage.setItem('expiresAt', response.expiresAt);
+    const session = buildStoredSession(response);
+    localStorage.setItem('userId', session.userId);
+    localStorage.setItem('expiresAt', session.expiresAt);
     window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { authenticated: true, user: response.user } }));
   }
 
@@ -65,11 +68,7 @@ class AuthService {
   }
 
   static isAuthenticated() {
-    if (!localStorage.getItem('userId')) {
-      return false;
-    }
-    const expiresAt = localStorage.getItem('expiresAt');
-    return expiresAt - Date.now() > 0;
+    return isSessionLocallyValid();
   }
 }
 

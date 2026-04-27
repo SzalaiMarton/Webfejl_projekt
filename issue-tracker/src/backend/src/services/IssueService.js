@@ -1,11 +1,20 @@
 import db from './DatabaseService.js';
 import { Issue } from '../models/Issue.js';
 import { v4 as uuidv4 } from 'uuid';
+import { validateIssueDescription, validateIssueTitle, validatePriority, validateStatus } from '../utils/validators.js';
 
 class IssueService {
   async createIssue(projectId, title, description, createdById, priority = 'medium', labels = []) {
-    if (!projectId || !title) {
-      throw new Error('Project ID and title are required');
+    if (!projectId || !validateIssueTitle(title)) {
+      throw new Error('Project ID and a valid issue title are required');
+    }
+
+    if (!validateIssueDescription(description)) {
+      throw new Error('Issue description must be 2000 characters or fewer');
+    }
+
+    if (!validatePriority(priority)) {
+      throw new Error('Invalid issue priority');
     }
 
     const project = db.getProjectById(projectId);
@@ -116,6 +125,22 @@ class IssueService {
       if (key in updates) {
         validUpdates[key] = updates[key];
       }
+    }
+
+    if ('title' in validUpdates && !validateIssueTitle(validUpdates.title)) {
+      throw new Error('Invalid issue title');
+    }
+
+    if ('description' in validUpdates && !validateIssueDescription(validUpdates.description)) {
+      throw new Error('Issue description must be 2000 characters or fewer');
+    }
+
+    if ('priority' in validUpdates && !validatePriority(validUpdates.priority)) {
+      throw new Error('Invalid issue priority');
+    }
+
+    if ('status' in validUpdates && !validateStatus(validUpdates.status)) {
+      throw new Error('Invalid issue status');
     }
 
     return await db.updateIssue(id, validUpdates);

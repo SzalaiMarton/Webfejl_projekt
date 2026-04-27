@@ -1,12 +1,16 @@
 import db from './DatabaseService.js';
 import { Project } from '../models/Project.js';
 import { v4 as uuidv4 } from 'uuid';
-import UserService from './UserService.js';
+import { validateProjectDescription, validateProjectName, validateProjectStatus } from '../utils/validators.js';
 
 class ProjectService {
   async createProject(name, description, ownerId) {
-    if (!name || name.trim() === '') {
-      throw new Error('Project name is required');
+    if (!validateProjectName(name)) {
+      throw new Error('Project name is required and must be 100 characters or fewer');
+    }
+
+    if (!validateProjectDescription(description)) {
+      throw new Error('Project description must be 800 characters or fewer');
     }
 
     const project = new Project(uuidv4(), name, description || '', ownerId);
@@ -108,6 +112,18 @@ class ProjectService {
       if (key in updates) {
         validUpdates[key] = updates[key];
       }
+    }
+
+    if ('name' in validUpdates && !validateProjectName(validUpdates.name)) {
+      throw new Error('Project name is required and must be 100 characters or fewer');
+    }
+
+    if ('description' in validUpdates && !validateProjectDescription(validUpdates.description)) {
+      throw new Error('Project description must be 800 characters or fewer');
+    }
+
+    if ('status' in validUpdates && !validateProjectStatus(validUpdates.status)) {
+      throw new Error('Invalid project status');
     }
 
     return await db.updateProject(id, validUpdates);

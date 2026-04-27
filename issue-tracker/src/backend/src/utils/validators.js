@@ -4,7 +4,12 @@ export function validateEmail(email) {
 }
 
 export function validatePassword(password) {
-  return password && password.length >= 6;
+  if (typeof password !== 'string') {
+    return false;
+  }
+
+  const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^\w\s]).{8,}$/;
+  return strongPasswordRegex.test(password);
 }
 
 export function validateUsername(username) {
@@ -13,11 +18,19 @@ export function validateUsername(username) {
 }
 
 export function validateProjectName(name) {
-  return name && name.trim().length > 0 && name.trim().length <= 100;
+  return Boolean(name && name.trim().length > 0 && name.trim().length <= 100);
+}
+
+export function validateProjectDescription(description) {
+  return description === undefined || description === null || String(description).trim().length <= 800;
 }
 
 export function validateIssueTitle(title) {
-  return title && title.trim().length > 0 && title.trim().length <= 200;
+  return Boolean(title && title.trim().length > 0 && title.trim().length <= 200);
+}
+
+export function validateIssueDescription(description) {
+  return description === undefined || description === null || String(description).trim().length <= 2000;
 }
 
 export function validateHexColor(color) {
@@ -25,7 +38,7 @@ export function validateHexColor(color) {
 }
 
 export function validateCommentContent(content) {
-  return content && content.trim().length > 0;
+  return Boolean(content && content.trim().length > 0 && content.trim().length <= 2000);
 }
 
 export function validatePriority(priority) {
@@ -37,5 +50,5 @@ export function validateStatus(status) {
 }
 
 export function validateProjectStatus(status) {
-  return ['active', 'archived', 'completed'].includes(status);
+  return ['active', 'inactive', 'archived', 'completed'].includes(status);
 }

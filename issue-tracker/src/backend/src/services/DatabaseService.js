@@ -6,7 +6,7 @@ import { Label } from '../models/Label.js';
 import { v4 as uuidv4 } from 'uuid';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const DATA_DIR = path.join(__dirname, '../../data');
+const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, '../../data');
 
 class DatabaseService {
   constructor() {

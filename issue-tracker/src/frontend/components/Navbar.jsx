@@ -1,72 +1,22 @@
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import AuthService from "../services/AuthService.js";
+import { useAuth } from "../services/AuthContext.jsx";
 
 import '../styles/tokens.css'
 import '../styles/design.css'
 import '../styles/layout.css'
 import CustomButton from "./CustomButton.jsx";
-import ApiService from "../services/ApiService.js";
 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
+  const { isAuthenticated, user } = useAuth();
 
   const isLoginPage = location.pathname === "/login";
-
-  async function checkAuthState() {
-    if (AuthService.isAuthenticated()) {
-      const storedUserId = AuthService.getCurrentUserIdFromStorage();
-      let storedUser = null;
-
-      try {
-        storedUser = await ApiService.get(`/user/get/${storedUserId}`);
-      } catch (error) {
-        console.log("Error during user fetching.", error.message);
-        return;
-      }
-
-      if (storedUser) {
-        setIsAuthenticated(true);
-        setUser(storedUser);
-        return;
-      }
-      
-      AuthService.getCurrentUser()
-        .then(user => {
-          if (user) {
-            setIsAuthenticated(true);
-            setUser(user);
-          } else {
-            setIsAuthenticated(false);
-            setUser(null);
-          }
-        })
-        .catch(() => {
-          setIsAuthenticated(false);
-          setUser(null);
-        });
-    } else {
-      setIsAuthenticated(false);
-      setUser(null);
-    }
-  };
-
-  useEffect(() => {
-    checkAuthState();
-
-    const handleAuthChange = (event) => {
-      checkAuthState();
-    };
-
-    window.addEventListener('authStateChanged', handleAuthChange);
-    
-    return () => {
-      window.removeEventListener('authStateChanged', handleAuthChange);
-    };
-  }, []);
+  const isRegisterPage = location.pathname === "/register";
+  const isAuthPage = useMemo(() => isLoginPage || isRegisterPage, [isLoginPage, isRegisterPage]);
+  const canManageProjects = Boolean(user);
  
   const handleLogout = () => {
     AuthService.logout();
@@ -75,11 +25,11 @@ function Navbar() {
 
   return (
     <nav className="navbar">
-        {!isLoginPage && isAuthenticated && (
+        {!isAuthPage && isAuthenticated && (
         <div className="navbar-brand-logged-in">
           <h1>IssueTracker</h1>
           <div className="navbar-user">
-            <h4>{user.username}</h4>
+            <h4>{user?.username}</h4>
             <CustomButton
               onClick={handleLogout}
               text={"Logout"}
@@ -90,13 +40,13 @@ function Navbar() {
         </div>
 
         )}
-        {(!isAuthenticated || isLoginPage) && (
+        {(!isAuthenticated || isAuthPage) && (
         <div className="navbar-brand-logged-out">
           <h1>IssueTracker</h1>
         </div>
       )}
       <ul className="navbar-links">
-          {!isLoginPage && isAuthenticated && (
+          {!isAuthPage && isAuthenticated && (
           <>
             <div className="navbar-inner-links">
               <li>
@@ -114,15 +64,17 @@ function Navbar() {
                   Create Issue
                 </NavLink>
               </li>
-              <li>
-                <NavLink to="/create-project" className={({ isActive }) => (isActive ? "active" : "")}>
-                  Create Project
-                </NavLink>
-              </li>
+              {canManageProjects && (
+                <li>
+                  <NavLink to="/create-project" className={({ isActive }) => (isActive ? "active" : "")}>
+                    Create Project
+                  </NavLink>
+                </li>
+              )}
             </div>
           </>
         )}
-          {(isLoginPage || !isAuthenticated) && (
+          {(isAuthPage || !isAuthenticated) && (
           <li>
             <NavLink to="/login" className={({ isActive }) => (isActive ? "active" : "")}>
               Login

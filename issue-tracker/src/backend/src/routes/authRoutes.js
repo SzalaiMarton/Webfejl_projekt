@@ -4,6 +4,7 @@ import { asyncHandler } from '../middleware/errorHandler.js';
 import { requireSessionAuth } from '../middleware/authMiddleware.js';
 import sessionRoutes from './sessionRoutes.js';
 import 'dotenv/config';
+import { validateEmail, validatePassword, validateUsername } from '../utils/validators.js';
 
 const router = express.Router();
 const sessionAge = Number(process.env.SESSION_AGE_NORMAL) || 30 * 60 * 1000;
@@ -17,6 +18,18 @@ router.post('/register', asyncHandler(async (req, res) => {
         return res.status(400).json({
             error: 'Username, email, and password are required'
         });
+    }
+
+    if (!validateUsername(username)) {
+        return res.status(400).json({ error: 'Username must be 3-20 characters and use only letters, numbers, or underscores' });
+    }
+
+    if (!validateEmail(email)) {
+        return res.status(400).json({ error: 'Please provide a valid email address' });
+    }
+
+    if (!validatePassword(password)) {
+        return res.status(400).json({ error: 'Password must be at least 8 characters long and include uppercase, lowercase, number, and special character' });
     }
 
     try {
@@ -38,6 +51,10 @@ router.post('/login', asyncHandler(async (req, res) => {
         return res.status(400).json({
             error: 'Email and password are required'
         });
+    }
+
+    if (!validateEmail(email)) {
+        return res.status(400).json({ error: 'Please provide a valid email address' });
     }
 
     try {
@@ -66,7 +83,6 @@ router.post('/logout', asyncHandler(async (req, res) => {
             return res.status(500).json({ error: 'Failed to destroy session' });
         }
 
-        res.session.user = null;
         res.clearCookie(process.env.SESSION_NAME || 'sid', { path: '/' });
         res.json({ message: 'Logged out' });
     });

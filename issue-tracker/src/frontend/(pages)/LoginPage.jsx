@@ -19,18 +19,18 @@ function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handlePasswordChange = (v) => {
-    setPassword(password + v);
+    setPassword(v);
   }
 
   const handleEmailChange = (v) => {
-    setEmail(email + v);
+    setEmail(v);
   }
 
   const verifyEmail = (value) => {
     if (value.length === 0) { return []; }
     
     const errors = [];
-    if (!value.includes('@')) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       errors.push("Please enter a valid email");
     }
     setIsEmailValid(errors.length === 0 && value.length > 0);
@@ -41,7 +41,7 @@ function LoginPage() {
     if (value.length === 0) { return []; }
     
     const errors = [];
-    if (value.length < 1) {
+    if (value.trim().length < 1) {
       errors.push("Password is required");
     }
     setIsPasswordValid(errors.length === 0 && value.length > 0);

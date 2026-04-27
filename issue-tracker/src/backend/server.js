@@ -43,7 +43,7 @@ app.use(session({
   rolling: true,
   cookie: {
     httpOnly: true,
-    secure: false,
+    secure: isProduction,
     sameSite: 'lax',
   }
 }));
@@ -62,20 +62,25 @@ app.use((req, res) => {
 
 app.use(errorHandler);
 
-async function startServer() {
+export async function startServer() {
   try {
     await db.initialize();
-    
-    app.listen(PORT, () => {
+
+    const server = app.listen(PORT, () => {
       console.log(`\nBackend server started successfully!`);
       console.log(`Server running on http://localhost:${PORT}`);
     });
+    return server;
   } catch (error) {
     console.error('Failed to start server:', error);
-    process.exit(1);
+    throw error;
   }
 }
 
-startServer();
+if (process.env.NODE_ENV !== 'test') {
+  startServer().catch(() => {
+    process.exit(1);
+  });
+}
 
 export default app;

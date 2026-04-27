@@ -14,6 +14,7 @@ import CreateProjectPage from "../(pages)/CreateProjectPage.jsx";
 import EditProjectPage from "../(pages)/EditProjectPage.jsx";
 import AssignProjectPeoplePage from "../(pages)/AssignProjectPeoplePage.jsx";
 import AssignIssuePeoplePage from "../(pages)/AssignIssuePeoplePage.jsx";
+import ProtectedRoute from "./ProtectedRoute.jsx";
 
 function AppRouter() {
   return (
@@ -23,16 +24,16 @@ function AppRouter() {
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/projects" element={<ProjectsPage />} />
-        <Route path="/projects/:id" element={<ProjectDetailsPage />} />
-        <Route path="/projects/:id/edit" element={<EditProjectPage />} />
-        <Route path="/projects/:id/assign" element={<AssignProjectPeoplePage />} />
-        <Route path="/issues/:id" element={<IssueDetailsPage />} />
-        <Route path="/issues/:id/edit" element={<EditIssuePage />} />
-        <Route path="/issues/:id/assign" element={<AssignIssuePeoplePage />} />
-        <Route path="/create-issue" element={<CreateIssuePage />} />
-        <Route path="/create-project" element={<CreateProjectPage/>}/>
+        <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+        <Route path="/projects" element={<ProtectedRoute><ProjectsPage /></ProtectedRoute>} />
+        <Route path="/projects/:id" element={<ProtectedRoute><ProjectDetailsPage /></ProtectedRoute>} />
+        <Route path="/projects/:id/edit" element={<ProtectedRoute><EditProjectPage /></ProtectedRoute>} />
+        <Route path="/projects/:id/assign" element={<ProtectedRoute><AssignProjectPeoplePage /></ProtectedRoute>} />
+        <Route path="/issues/:id" element={<ProtectedRoute><IssueDetailsPage /></ProtectedRoute>} />
+        <Route path="/issues/:id/edit" element={<ProtectedRoute><EditIssuePage /></ProtectedRoute>} />
+        <Route path="/issues/:id/assign" element={<ProtectedRoute><AssignIssuePeoplePage /></ProtectedRoute>} />
+        <Route path="/create-issue" element={<ProtectedRoute><CreateIssuePage /></ProtectedRoute>} />
+        <Route path="/create-project" element={<ProtectedRoute><CreateProjectPage/></ProtectedRoute>}/>
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
